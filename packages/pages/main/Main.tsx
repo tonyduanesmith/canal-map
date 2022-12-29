@@ -1,14 +1,29 @@
-import React from "react";
 import Map from "../../atoms/map";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
-import { getGeoJsonToAnnotations } from "./utils";
+import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
+import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 
 const Main = () => {
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   if (isLoaded) {
-    const locksAnnotations = getGeoJsonToAnnotations(locksGeoJSON as GeoJSON.FeatureCollection);
-    return <Map id="canal-map" token={import.meta.env.VITE_TOKEN} showsUserLocation annotations={locksAnnotations} />;
+    const locksAnnotations = getGeoJsonLockToAnnotations(locksGeoJSON as GeoJSON.FeatureCollection);
+    const canalOverlayStyle = new mapkit.Style({
+      lineWidth: 4,
+      lineJoin: "round",
+      strokeColor: "#0000FF",
+      strokeOpacity: 0.5,
+    });
+    const canalOverlay = getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
+    return (
+      <Map
+        id="canal-map"
+        token={import.meta.env.VITE_TOKEN}
+        showsUserLocation
+        annotations={locksAnnotations}
+        overlays={canalOverlay}
+      />
+    );
   }
   return null;
 };

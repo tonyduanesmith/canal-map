@@ -1,48 +1,31 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { StyledMapContainer } from "./styled";
 import { gettingGeoCoordinates } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
+import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 
 interface Props {
   token: string;
   id: string;
   showsUserLocation?: boolean;
-  annotations: any;
+  annotations: Array<mapkit.ImageAnnotation>;
+  overlays: Array<mapkit.PolylineOverlay>;
 }
 
-const Map = ({ token, id, showsUserLocation = false, annotations }: Props) => {
+const Map = ({ token, id, showsUserLocation = false, annotations, overlays }: Props) => {
   const mapRef = useRef<mapkit.Map>();
 
+  const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
+
+  if (isLoaded) {
+  }
+
   useEffect(() => {
-    const setupMapKitJs = async () => {
-      //@ts-ignore
-      if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
-        // mapkit.core.js or the libraries are not loaded yet.
-        // Set up the callback and wait for it to be called.
-        await new Promise(resolve => {
-          //@ts-ignore
-          window.initMapKit = resolve;
-        });
-
-        // Clean up
-        //@ts-ignore
-        delete window.initMapKit;
-      }
-
-      mapkit.init({
-        authorizationCallback: done => {
-          done(token);
-        },
-      });
-    };
-
     const main = async () => {
-      await setupMapKitJs();
-
+      // get current location
       const result = await gettingGeoCoordinates();
       const { coords } = result;
-
       const currentRegion = new mapkit.CoordinateRegion(
         new mapkit.Coordinate(coords.latitude, coords.longitude),
         new mapkit.CoordinateSpan(0.167647972, 0.354985255),
@@ -53,14 +36,11 @@ const Map = ({ token, id, showsUserLocation = false, annotations }: Props) => {
         mapRef.current = new mapkit.Map(id);
       }
       if (mapRef.current) {
-        mapRef.current.region = currentRegion;
-        mapRef.current.showsUserLocation = showsUserLocation;
-        mapRef.current.showItems(annotations);
+        mapRef.current.addOverlays(overlays);
+        mapRef.current.addAnnotations(annotations);
         mapRef.current.annotationForCluster = clusterAnnotation => {
           if (clusterAnnotation.clusteringIdentifier === "lock") {
             const angle = clusterAnnotation.memberAnnotations[0].data?.angle ?? 0;
-            const count = clusterAnnotation.memberAnnotations.length;
-            console.log(count);
             return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
               url: {
                 1: lockClusterImageArray[angle],
@@ -74,11 +54,14 @@ const Map = ({ token, id, showsUserLocation = false, annotations }: Props) => {
             });
           }
         };
+        mapRef.current.region = currentRegion;
+        mapRef.current.showsUserLocation = showsUserLocation;
       }
     };
-
-    main();
-  }, []);
+    if (isLoaded) {
+      main();
+    }
+  }, [isLoaded]);
   return <StyledMapContainer id={id} />;
 };
 
