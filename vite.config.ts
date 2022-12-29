@@ -1,5 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import svgr from "vite-plugin-svgr";
 import path from "path";
 
 const root = path.resolve(__dirname, "./packages/app/canalMap");
@@ -10,5 +11,5 @@ const publicDir = path.resolve(root, "public");
 export default defineConfig({
   root: src,
   publicDir,
-  plugins: [react()],
-})
+  plugins: [svgr(), react()],
+});

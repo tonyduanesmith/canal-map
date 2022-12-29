@@ -2,19 +2,20 @@ import React, { useEffect, useRef } from "react";
 
 import { StyledMapContainer } from "./styled";
 import { gettingGeoCoordinates } from "./utils";
+import lockClusterImageArray from "../icons/lock-cluster";
 
 interface Props {
   token: string;
   id: string;
   showsUserLocation?: boolean;
+  annotations: any;
 }
 
-const Map = ({ token, id, showsUserLocation = false }: Props) => {
+const Map = ({ token, id, showsUserLocation = false, annotations }: Props) => {
   const mapRef = useRef<mapkit.Map>();
 
   useEffect(() => {
     const setupMapKitJs = async () => {
-      console.log("setup");
       //@ts-ignore
       if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
         // mapkit.core.js or the libraries are not loaded yet.
@@ -37,7 +38,6 @@ const Map = ({ token, id, showsUserLocation = false }: Props) => {
     };
 
     const main = async () => {
-      console.log("main");
       await setupMapKitJs();
 
       const result = await gettingGeoCoordinates();
@@ -50,14 +50,30 @@ const Map = ({ token, id, showsUserLocation = false }: Props) => {
 
       // Create a map in the element whose ID is "map-container"
       if (mapRef.current === undefined) {
-        console.log("new map");
         mapRef.current = new mapkit.Map(id);
       }
       if (mapRef.current) {
-        console.log("add cup");
         mapRef.current.region = currentRegion;
         mapRef.current.showsUserLocation = showsUserLocation;
-        console.log(mapRef.current.annotations);
+        mapRef.current.showItems(annotations);
+        mapRef.current.annotationForCluster = clusterAnnotation => {
+          if (clusterAnnotation.clusteringIdentifier === "lock") {
+            const angle = clusterAnnotation.memberAnnotations[0].data?.angle ?? 0;
+            const count = clusterAnnotation.memberAnnotations.length;
+            console.log(count);
+            return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
+              url: {
+                1: lockClusterImageArray[angle],
+              },
+              size: {
+                width: 30,
+                height: 30,
+              },
+              anchorOffset: new DOMPoint(0, -15),
+              animates: false,
+            });
+          }
+        };
       }
     };
 

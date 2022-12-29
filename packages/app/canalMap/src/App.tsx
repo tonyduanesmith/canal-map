@@ -1,9 +1,9 @@
 import React from "react";
-import Map from "../../../atoms/map";
+import Main from "../../../pages/main";
 import "./App.css";
 
 function App() {
-  return <Map id="canal-map" token={import.meta.env.VITE_TOKEN} showsUserLocation />;
+  return <Main />;
 }
 
 export default App;
