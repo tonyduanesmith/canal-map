@@ -3,26 +3,32 @@ import { StyledCard } from "./styled";
 
 const SlideOver = () => {
   const pointerDownEvent = useRef<PointerEvent | null>(null);
-  const initialPosition = useRef<null | number>(null);
-  const [position, setPosition] = useState(800);
+  const initialSnapPosition = window.innerHeight * 0.9;
+  const [position, setPosition] = useState<number>(initialSnapPosition);
   const handleOnPointerDown = (event: PointerEvent) => {
     pointerDownEvent.current = event;
   };
   const handleOnPointerUp = (event: PointerEvent) => {
+    snapYPosition(position);
     pointerDownEvent.current = null;
   };
+
+  const snapYPosition = (mouseY: number): void => {
+    const snapPoints = [initialSnapPosition, window.innerHeight * 0.6, window.innerHeight * 0.05]
+
+    let snappedYPosition = snapPoints[0];
+    for (let i = 1; i < snapPoints.length; i++) {
+      if (Math.abs(mouseY - snappedYPosition) > Math.abs(mouseY - snapPoints[i])) {
+        snappedYPosition = snapPoints[i];
+      }
+    }
+    setPosition(snappedYPosition)
+  }
+
   const handleOnPointerMove = (event: PointerEvent) => {
     console.log(event.currentTarget.getBoundingClientRect().top);
     if (pointerDownEvent.current !== null) {
-      const initialYPosition = pointerDownEvent.current.pageY;
-      const newYPosition = event.pageY;
-      const newSliderOverlayPosition = newYPosition;
-      console.log({
-        initialYPosition,
-        newYPosition,
-        newSliderOverlayPosition,
-      });
-      setPosition(newSliderOverlayPosition);
+      setPosition(event.clientY);
     }
   };
   return (

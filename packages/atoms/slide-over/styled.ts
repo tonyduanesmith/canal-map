@@ -10,4 +10,5 @@ export const StyledCard = styled.div<{ position: number }>`
   border-top-right-radius: 30px;
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
+  transition: top 0.1s ease-out 0s;
 `;
