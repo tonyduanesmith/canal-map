@@ -1,5 +1,5 @@
 import Map from "../../atoms/map";
-import SlideOver from "../../atoms/slide-over";
+import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
@@ -26,7 +26,9 @@ const Main = () => {
           annotations={locksAnnotations}
           overlays={canalOverlay}
         />
-        <SlideOver />
+        <BottomSheet snapPoints={[0, 50, 80]}>
+          <>test</>
+        </BottomSheet>
       </StyledContainer>
     );
   }
