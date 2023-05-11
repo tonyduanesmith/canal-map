@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect, memo } from "react";
 import { useSpring, config } from "@react-spring/web";
 import { useGesture } from "react-use-gesture";
 
@@ -7,13 +7,15 @@ import { StyledSheet, StyledHandle } from "./styled";
 interface BottomSheetProps {
   children: React.ReactNode;
   snapPoints: number[];
+  isOpen?: boolean;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, isOpen }) => {
+  const skipGestureRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const [{ y }, setY] = useSpring(() => ({
-    y: 0,
+    y: 50,
     config: {
       ...config.default,
       tension: 400,
@@ -30,11 +32,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints }) => {
   const bind = useGesture(
     {
       onDrag: ({ movement: [, my], memo }) => {
+        if (skipGestureRef.current) {
+          skipGestureRef.current = false;
+          return;
+        }
         const initialY = memo || y.get();
         setY({ y: initialY + my });
         return initialY;
       },
       onDragEnd: ({ velocity, movement: [, my] }) => {
+        if (skipGestureRef.current) {
+          skipGestureRef.current = false;
+          return;
+        }
         const sheetHeight = sheetRef.current?.offsetHeight || 0;
         const currentY = y.get();
         const currentPercentage = (currentY / sheetHeight) * 100;
@@ -62,12 +72,17 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints }) => {
         const nextSnapPoint =
           getNextSnapPoint(snapPoints, targetPercentage, direction, isMomentum) ||
           getClosestSnapPoint(targetPercentage);
-
         setY({ y: (nextSnapPoint / 100) * sheetHeight });
       },
     },
     { drag: { useTouch: true } },
   );
+
+  useEffect(() => {
+    skipGestureRef.current = true;
+    const sheetHeight = sheetRef.current?.offsetHeight || 0;
+    setY({ y: isOpen ? (snapPoints[0] / 100) * sheetHeight : (snapPoints[1] / 100) * sheetHeight });
+  }, [isOpen]);
 
   return (
     <StyledSheet
@@ -83,4 +98,4 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints }) => {
   );
 };
 
-export default BottomSheet;
+export default memo(BottomSheet);

@@ -6,19 +6,22 @@ export const StyledSheet = styled(animated.div)`
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 80vh;
+  height: calc(100% - 40px);
   background: rgba(50, 50, 50, 0.63);
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
+  padding: ${({ theme }) => theme.spacing[6]};
+  padding-top: 0;
+  box-sizing: border-box;
 `;
 
 export const StyledHandle = styled.div`
   width: 40px;
   height: 4px;
   background-color: #ccc;
-  margin: 8px auto;
+  margin: ${({ theme }) => theme.spacing[4]} auto;
   border-radius: 2px;
 `;
