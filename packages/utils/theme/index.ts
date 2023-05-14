@@ -1,53 +1,29 @@
+import lightPalette from "./lightPalette";
+import darkPalette from "./darkPalette";
+import spacing from "./spacing";
+import size from "./size";
+import shape from "./shape";
+import typography from "./typography";
+
+const dark = {
+  palette: darkPalette,
+  spacing,
+  size,
+  shape,
+  typography,
+};
+
+const light = {
+  palette: lightPalette,
+  spacing,
+  size,
+  shape,
+  typography,
+};
+
 const theme = {
-  borderRadius: {
-    small: "4px",
-    medium: "8px",
-    large: "12px",
-  },
-  palette: {
-    system: {
-      red: "rgb(255, 59, 48)",
-      orange: "rgb(255, 149, 0)",
-      yellow: "rgb(255, 204, 0)",
-      green: "rgb(76, 217, 100)",
-      mint: "rgb(0, 199, 190)",
-      teal: "rgb(90, 200, 250)",
-      cyan: "rgb(50, 173, 230)",
-      blue: "rgb(0, 122, 255)",
-      purple: "rgb(88, 86, 214)",
-      pink: "rgb(255, 45, 85)",
-    },
-    neutrals: {
-      "50": "#ECEFF1",
-      "100": "#CFD8DC",
-      "200": "#B0BEC5",
-      "300": "#90A4AE",
-      "400": "#78909C",
-      "500": "#607D8B",
-      "600": "#546E7A",
-      "700": "#455A64",
-      "800": "#37474F",
-      "900": "#263238",
-    },
-  },
-  spacing: {
-    "0": "0px",
-    "1": "2px",
-    "2": "3px",
-    "3": "6px",
-    "4": "12px",
-    "5": "18px",
-    "6": "24px",
-    "7": "32px",
-    "8": "40px",
-    "9": "48px",
-    "10": "64x",
-    "11": "80px",
-    "12": "96px",
-    "13": "120px",
-    "14": "160px",
-    full: "100%",
-  },
+  light,
+  dark,
 };
 
 export default theme;

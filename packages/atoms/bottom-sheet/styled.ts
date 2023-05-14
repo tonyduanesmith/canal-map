@@ -13,7 +13,7 @@ export const StyledSheet = styled(animated.div)`
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
-  padding: ${({ theme }) => theme.spacing[6]};
+  padding: ${({ theme }) => theme.spacing.md};
   padding-top: 0;
   box-sizing: border-box;
 `;
@@ -22,6 +22,6 @@ export const StyledHandle = styled.div`
   width: 40px;
   height: 4px;
   background-color: #ccc;
-  margin: ${({ theme }) => theme.spacing[4]} auto;
+  margin: ${({ theme }) => theme.spacing.sm} auto;
   border-radius: 2px;
 `;
