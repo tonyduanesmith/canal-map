@@ -1,6 +1,8 @@
-import { StyledSearch, StyledSearchIcon, StyledSearchWrapper } from "./styled";
+import Box from "../box/Box";
+import { BoxProps } from "../box/styled";
+import { StyledSearch, StyledSearchIcon } from "./styled";
 
-interface SearchProps {
+interface SearchProps extends BoxProps {
   onSearchFocus: () => void;
   onSearchBlur?: () => void;
   placeholder?: string;
@@ -8,12 +10,12 @@ interface SearchProps {
   onChange: (value: string) => void;
 }
 
-const Search = ({ onSearchFocus, onSearchBlur, placeholder = "Search", value, onChange }: SearchProps) => {
+const Search = ({ onSearchFocus, onSearchBlur, placeholder = "Search", value, onChange, ...rest }: SearchProps) => {
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   };
   return (
-    <StyledSearchWrapper>
+    <Box position="relative" flex="1" display="flex" {...rest}>
       <StyledSearch
         onFocus={onSearchFocus}
         onBlur={onSearchBlur}
@@ -22,7 +24,7 @@ const Search = ({ onSearchFocus, onSearchBlur, placeholder = "Search", value, on
         onChange={handleOnChange}
       />
       <StyledSearchIcon size={20} />
-    </StyledSearchWrapper>
+    </Box>
   );
 };
 

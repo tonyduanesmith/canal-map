@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import { Search as SearchIcon } from "@styled-icons/evaicons-solid";
-
-export const StyledSearchWrapper = styled.div`
-  position: relative;
-  display: flex;
-`;
+import Box from "../box/Box";
 
 export const StyledSearch = styled.input`
+  position: relative;
+  display: flex;
+  flex: 1;
   width: 100%;
   height: ${({ theme }) => theme.spacing.lg};
   border-radius: ${({ theme }) => theme.shape.borderRadius.medium};

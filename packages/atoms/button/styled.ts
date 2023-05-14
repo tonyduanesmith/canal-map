@@ -28,7 +28,7 @@ const rounded = css`
 `;
 
 const danger = css`
-  background-color: ${p => p.theme.palette.colour.red};
+  background-color: ${p => p.theme.palette.system.red};
   color: white;
 `;
 
@@ -37,17 +37,18 @@ const fullWidth = css`
 `;
 
 export const StyledButton = styled.button<Props>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-width: ${p => p.theme.spacing.xl};
-  color: ${p => p.theme.palette.primary.main};
+  color: ${p => p.theme.palette.common.white};
   border-radius: ${p => p.theme.shape.radius};
   outline: none;
-  background-color: ${p => p.theme.palette.background.default};
-  box-shadow: ${p => p.theme.palette.shadow[2]};
+  background-color: ${p => p.theme.palette.system.blue};
   border: 1px solid ${p => p.theme.palette.divider};
-  margin: ${p => p.theme.spacing.sm};
   cursor: pointer;
+  padding: auto;
   &:hover {
-    box-shadow: ${p => p.theme.palette.shadow[1]};
     transition: box-shadow 0.2s ease-in-out;
   }
   &:active {

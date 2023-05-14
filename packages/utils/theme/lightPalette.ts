@@ -2,7 +2,7 @@ export default {
   background: {
     default: "#EFEEEE",
   },
-  colour: {
+  system: {
     blue: "rgb(0, 122, 255)",
     green: "rgb(52,199,89)",
     indigo: "rgb(88,86,214)",
@@ -12,6 +12,10 @@ export default {
     red: "rgb(255, 59,48)",
     teal: "rgb(90,200,250)",
     yellow: "rgb(255,204,0)",
+  },
+  common: {
+    black: "#000",
+    white: "#fff",
   },
   primary: {
     main: "rgb(255,149,0)",

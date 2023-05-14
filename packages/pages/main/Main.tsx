@@ -8,9 +8,10 @@ import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
-import { StyledContainer } from "./styled";
+import { StyledContainer, StyledSearchContainer } from "./styled";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
+import Box from "../../atoms/box/Box";
 
 const Main = () => {
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
@@ -89,8 +90,15 @@ const Main = () => {
         centerCoords={selectedCoords}
       />
       <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint}>
-        <Search onSearchFocus={handleOnSearchFocus} value={searchValue} onChange={handleOnSearchChange} />
-        <Button onClick={handleOnSearchCancel}>Cancel</Button>
+        <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+          <Search
+            onSearchFocus={handleOnSearchFocus}
+            value={searchValue}
+            onChange={handleOnSearchChange}
+            marginRight="md"
+          />
+          <Button onClick={handleOnSearchCancel}>Cancel</Button>
+        </Box>
         <AutoSizer>
           {({ height, width }) => (
             <List
