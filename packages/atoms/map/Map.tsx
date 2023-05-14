@@ -11,10 +11,9 @@ interface Props {
   showsUserLocation?: boolean;
   annotations: Array<mapkit.ImageAnnotation>;
   overlays: Array<mapkit.PolylineOverlay>;
-  centerCoords: mapkit.Coordinate | null;
 }
 
-const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
+const Map = ({ token, id, showsUserLocation = false, annotations, overlays }: Props) => {
   const mapRef = useRef<mapkit.Map>();
 
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
@@ -63,16 +62,6 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
       initializeMap();
     }
   }, [isLoaded, annotations, overlays]);
-
-  useEffect(() => {
-    if (mapRef.current && centerCoords) {
-      const newRegion = new mapkit.CoordinateRegion(
-        centerCoords,
-        new mapkit.CoordinateSpan(0.0067647972, 0.00154985255),
-      );
-      mapRef.current.region = newRegion;
-    }
-  }, [centerCoords]);
 
   return <StyledMapContainer id={id} />;
 };

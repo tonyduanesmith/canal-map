@@ -2,25 +2,14 @@ import { StyledSearch, StyledSearchIcon, StyledSearchWrapper } from "./styled";
 
 interface SearchProps {
   onSearchFocus: () => void;
-  onSearchBlur?: () => void;
+  onSearchBlur: () => void;
   placeholder?: string;
-  value?: string;
-  onChange: (value: string) => void;
 }
 
-const Search = ({ onSearchFocus, onSearchBlur, placeholder = "Search", value, onChange }: SearchProps) => {
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
-  };
+const Search = ({ onSearchFocus, onSearchBlur, placeholder = "Search" }: SearchProps) => {
   return (
     <StyledSearchWrapper>
-      <StyledSearch
-        onFocus={onSearchFocus}
-        onBlur={onSearchBlur}
-        placeholder={placeholder}
-        value={value}
-        onChange={handleOnChange}
-      />
+      <StyledSearch onFocus={onSearchFocus} onBlur={onSearchBlur} placeholder={placeholder} />
       <StyledSearchIcon size={20} />
     </StyledSearchWrapper>
   );

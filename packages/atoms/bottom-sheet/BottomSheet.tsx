@@ -7,10 +7,10 @@ import { StyledSheet, StyledHandle } from "./styled";
 interface BottomSheetProps {
   children: React.ReactNode;
   snapPoints: number[];
-  setSnapPoint?: number;
+  isOpen?: boolean;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnapPoint = 0 }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, isOpen }) => {
   const skipGestureRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -81,8 +81,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
   useEffect(() => {
     skipGestureRef.current = true;
     const sheetHeight = sheetRef.current?.offsetHeight || 0;
-    setY({ y: (snapPoints[setSnapPoint] / 100) * sheetHeight });
-  }, [setSnapPoint]);
+    setY({ y: isOpen ? (snapPoints[0] / 100) * sheetHeight : (snapPoints[1] / 100) * sheetHeight });
+  }, [isOpen]);
 
   return (
     <StyledSheet

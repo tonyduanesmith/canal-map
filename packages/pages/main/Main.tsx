@@ -1,6 +1,4 @@
 import { useState, useMemo } from "react";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
@@ -10,13 +8,9 @@ import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import { StyledContainer } from "./styled";
 import Search from "../../atoms/search";
-import Button from "../../atoms/button";
 
 const Main = () => {
-  const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
-  const [searchValue, setSearchValue] = useState("");
-  const [filterLocks, setFilterLocks] = useState<mapkit.ImageAnnotation[]>([]);
-  const [snapPoint, setSnapPoint] = useState(1);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
 
   const canalOverlayStyle = useMemo(() => {
@@ -40,43 +34,14 @@ const Main = () => {
     return getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
   }, [canalGeoJSON, canalOverlayStyle, isLoaded]);
 
-  const getFilteredLocks = useMemo(() => {
-    if (!searchValue) return locksAnnotations;
-    return filterLocks;
-  }, [filterLocks, locksAnnotations, searchValue]);
-
-  const handleOnSearchCancel = () => {
-    setSnapPoint(1);
+  const handleOnSearchBlur = () => {
+    setIsBottomSheetOpen(false);
   };
   const handleOnSearchFocus = () => {
-    setSnapPoint(0);
+    setIsBottomSheetOpen(true);
   };
 
-  const handleOnSearchChange = async (value: string) => {
-    const filterLocks = locksAnnotations?.filter(annotation =>
-      annotation.title.toLowerCase().includes(value.toLowerCase()),
-    );
-    console.log(filterLocks);
-    setFilterLocks(filterLocks ?? []);
-    setSearchValue(value);
-  };
   if (!isLoaded) return null;
-
-  const handleOnRowClick = (annotation: mapkit.ImageAnnotation) => {
-    setSnapPoint(2);
-    setSelectedCoords(annotation.coordinate);
-    console.log(annotation);
-  };
-
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const annotation = getFilteredLocks?.[index];
-    if (!annotation) return null;
-    return (
-      <div style={style} onClick={() => handleOnRowClick(annotation)}>
-        <div>{annotation.title}</div>
-      </div>
-    );
-  };
 
   return (
     <StyledContainer>
@@ -86,23 +51,9 @@ const Main = () => {
         showsUserLocation
         annotations={locksAnnotations ?? []}
         overlays={canalOverlay ?? []}
-        centerCoords={selectedCoords}
       />
-      <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint}>
-        <Search onSearchFocus={handleOnSearchFocus} value={searchValue} onChange={handleOnSearchChange} />
-        <Button onClick={handleOnSearchCancel}>Cancel</Button>
-        <AutoSizer>
-          {({ height, width }) => (
-            <List
-              height={(height ?? 0) - 100}
-              itemSize={50}
-              itemCount={getFilteredLocks?.length ?? 0}
-              width={width ?? 0}
-            >
-              {Row}
-            </List>
-          )}
-        </AutoSizer>
+      <BottomSheet snapPoints={[0, 50, 80]} isOpen={isBottomSheetOpen}>
+        <Search onSearchBlur={handleOnSearchBlur} onSearchFocus={handleOnSearchFocus} />
       </BottomSheet>
     </StyledContainer>
   );
