@@ -24,6 +24,7 @@ export interface BoxProps {
   marginRight?: Spacing;
   marginLeft?: Spacing;
   children?: ReactNode;
+  style?: CSSProperties;
 }
 
 export const StyledBox = styled.div<BoxProps>`

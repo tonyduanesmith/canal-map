@@ -8,10 +8,10 @@ import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
-import { StyledContainer, StyledSearchContainer } from "./styled";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
+import ListItem from "../../atoms/list-item";
 
 const Main = () => {
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
@@ -63,24 +63,14 @@ const Main = () => {
   };
   if (!isLoaded) return null;
 
-  const handleOnRowClick = (annotation: mapkit.ImageAnnotation) => {
+  const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setSnapPoint(2);
     setSelectedCoords(annotation.coordinate);
     console.log(annotation);
   };
 
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const annotation = getFilteredLocks?.[index];
-    if (!annotation) return null;
-    return (
-      <div style={style} onClick={() => handleOnRowClick(annotation)}>
-        <div>{annotation.title}</div>
-      </div>
-    );
-  };
-
   return (
-    <StyledContainer>
+    <Box width="100%" height="100%">
       <Map
         id="canal-map"
         token={import.meta.env.VITE_TOKEN}
@@ -103,16 +93,17 @@ const Main = () => {
           {({ height, width }) => (
             <List
               height={(height ?? 0) - 100}
-              itemSize={50}
+              itemSize={80}
               itemCount={getFilteredLocks?.length ?? 0}
               width={width ?? 0}
+              itemData={{ items: getFilteredLocks ?? [], onClick: handleOnListItemClick }}
             >
-              {Row}
+              {ListItem}
             </List>
           )}
         </AutoSizer>
       </BottomSheet>
-    </StyledContainer>
+    </Box>
   );
 };
 
