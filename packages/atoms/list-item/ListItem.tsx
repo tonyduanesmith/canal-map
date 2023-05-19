@@ -1,4 +1,3 @@
-import { MouseEvent, useState } from "react";
 import { ListChildComponentProps } from "react-window";
 import LockCircleIcon from "../icons/lock-circle";
 import Box from "../box";
