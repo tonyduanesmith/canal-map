@@ -21,7 +21,6 @@ const ListItem = ({ index, style, data }: ListItemProps) => {
   const bind = useDrag(({ down, distance }) => {
     if (!down && distance < DRAG_THRESHOLD) {
       data.onClick(item);
-      console.log("Clicked");
     }
   });
 

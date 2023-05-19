@@ -57,7 +57,6 @@ const Main = () => {
     const filterLocks = locksAnnotations?.filter(annotation =>
       annotation.title.toLowerCase().includes(value.toLowerCase()),
     );
-    console.log(filterLocks);
     setFilterLocks(filterLocks ?? []);
     setSearchValue(value);
   };
@@ -66,7 +65,6 @@ const Main = () => {
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setSnapPoint(2);
     setSelectedCoords(annotation.coordinate);
-    console.log(annotation);
   };
 
   return (
