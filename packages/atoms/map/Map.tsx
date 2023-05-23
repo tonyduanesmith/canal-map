@@ -68,7 +68,7 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
     if (mapRef.current && centerCoords) {
       const newRegion = new mapkit.CoordinateRegion(
         centerCoords,
-        new mapkit.CoordinateSpan(0.0067647972, 0.00154985255),
+        new mapkit.CoordinateSpan(0.0030647972, 0.00104985255),
       );
       mapRef.current.region = newRegion;
     }
