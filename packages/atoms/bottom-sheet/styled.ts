@@ -5,8 +5,9 @@ export const StyledSheet = styled(animated.div)`
   position: fixed;
   left: 0;
   bottom: 0;
+  top: 0;
   width: 100%;
-  height: calc(100% - 40px);
+  height: calc(100% + 80px);
   background: rgba(50, 50, 50, 0.63);
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;

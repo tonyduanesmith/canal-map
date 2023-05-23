@@ -37,6 +37,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
           return;
         }
         const initialY = memo || y.get();
+        if (initialY <= 0 && my < 0) {
+          return;
+        }
         setY({ y: initialY + my });
         return initialY;
       },
@@ -45,7 +48,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
           skipGestureRef.current = false;
           return;
         }
-        const sheetHeight = sheetRef.current?.offsetHeight || 0;
+        const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
         const currentY = y.get();
         const currentPercentage = (currentY / sheetHeight) * 100;
 
@@ -72,6 +75,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
         const nextSnapPoint =
           getNextSnapPoint(snapPoints, targetPercentage, direction, isMomentum) ||
           getClosestSnapPoint(targetPercentage);
+
+        console.log({ nextSnapPoint });
         setY({ y: (nextSnapPoint / 100) * sheetHeight });
       },
     },
@@ -80,7 +85,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
 
   useEffect(() => {
     skipGestureRef.current = true;
-    const sheetHeight = sheetRef.current?.offsetHeight || 0;
+    const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
     setY({ y: (snapPoints[setSnapPoint] / 100) * sheetHeight });
   }, [setSnapPoint]);
 
