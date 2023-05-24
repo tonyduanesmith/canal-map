@@ -14,6 +14,7 @@ import Box from "../../atoms/box/Box";
 import ListItem from "../../atoms/list-item";
 import LocationButton from "../../atoms/location-button/LocationButton";
 import { StyledLocationWrapper } from "./styled";
+import { gettingGeoCoordinates } from "../../atoms/map/utils";
 
 const Main = () => {
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
@@ -69,6 +70,17 @@ const Main = () => {
     setSelectedCoords(annotation.coordinate);
   };
 
+  const handleOnLocationClick = async () => {
+    try {
+      const result = await gettingGeoCoordinates();
+      const { coords } = result;
+      const mapkitCoords = new mapkit.Coordinate(coords.latitude, coords.longitude);
+      setSelectedCoords(mapkitCoords);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Box width="100%" height="100%" position="relative">
       <Map
@@ -80,7 +92,7 @@ const Main = () => {
         centerCoords={selectedCoords}
       />
       <StyledLocationWrapper>
-        <LocationButton />
+        <LocationButton onClick={handleOnLocationClick} />
       </StyledLocationWrapper>
 
       <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint}>
