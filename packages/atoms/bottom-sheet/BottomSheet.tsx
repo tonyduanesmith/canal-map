@@ -39,7 +39,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     {
       onDrag: ({ movement: [, my], memo }) => {
         if (skipGestureRef.current) {
-          skipGestureRef.current = false;
           return;
         }
         const initialY = memo || y.get();
@@ -51,7 +50,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       },
       onDragEnd: ({ velocity, movement: [, my] }) => {
         if (skipGestureRef.current) {
-          skipGestureRef.current = false;
           return;
         }
         const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
@@ -82,7 +80,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           getNextSnapPoint(snapPoints, targetPercentage, direction, isMomentum) ||
           getClosestSnapPoint(targetPercentage);
 
-        console.log({ nextSnapPoint });
         setY({ y: (nextSnapPoint / 100) * sheetHeight });
       },
     },
@@ -95,13 +92,15 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     }
 
     skipGestureRef.current = true;
-
-    console.log("run ues effect");
     const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
     setY({ y: (snapPoints[setSnapPoint.snapPoint] / 100) * sheetHeight });
 
+    setTimeout(() => {
+      skipGestureRef.current = false;
+    }, 300);
+
     // Reset the forceUpdate flag to avoid unwanted sheet movements.
-    if (typeof onSnapPointChange === "function") {
+    if (onSnapPointChange) {
       onSnapPointChange({ snapPoint: setSnapPoint.snapPoint, forceUpdate: false });
     }
   }, [setSnapPoint]);
