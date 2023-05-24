@@ -20,7 +20,7 @@ const Main = () => {
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [filterLocks, setFilterLocks] = useState<mapkit.ImageAnnotation[]>([]);
-  const [snapPoint, setSnapPoint] = useState(1);
+  const [snapPoint, setSnapPoint] = useState({ snapPoint: 1, forceUpdate: false });
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
 
   const canalOverlayStyle = useMemo(() => {
@@ -50,10 +50,10 @@ const Main = () => {
   }, [filterLocks, locksAnnotations, searchValue]);
 
   const handleOnSearchCancel = () => {
-    setSnapPoint(1);
+    setSnapPoint({ snapPoint: 1, forceUpdate: true });
   };
   const handleOnSearchFocus = () => {
-    setSnapPoint(0);
+    setSnapPoint({ snapPoint: 0, forceUpdate: true });
   };
 
   const handleOnSearchChange = async (value: string) => {
@@ -66,7 +66,7 @@ const Main = () => {
   if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
-    setSnapPoint(2);
+    setSnapPoint({ snapPoint: 2, forceUpdate: true });
     setSelectedCoords(annotation.coordinate);
   };
 
@@ -79,6 +79,10 @@ const Main = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleSnapPointChange = (newSnapPoint: { snapPoint: number; forceUpdate: boolean }) => {
+    setSnapPoint({ snapPoint: newSnapPoint.snapPoint, forceUpdate: false });
   };
 
   return (
@@ -95,7 +99,7 @@ const Main = () => {
         <LocationButton onClick={handleOnLocationClick} />
       </StyledLocationWrapper>
 
-      <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint}>
+      <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint} onSnapPointChange={handleSnapPointChange}>
         <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
           <Search
             onSearchFocus={handleOnSearchFocus}

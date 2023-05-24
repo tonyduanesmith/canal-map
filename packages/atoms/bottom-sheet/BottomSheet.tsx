@@ -7,10 +7,16 @@ import { StyledSheet, StyledHandle } from "./styled";
 interface BottomSheetProps {
   children: React.ReactNode;
   snapPoints: number[];
-  setSnapPoint?: number;
+  setSnapPoint?: { snapPoint: number; forceUpdate: boolean };
+  onSnapPointChange?: (newSnapPoint: { snapPoint: number; forceUpdate: boolean }) => void;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnapPoint = 0 }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  children,
+  snapPoints,
+  setSnapPoint = { snapPoint: 0, forceUpdate: false },
+  onSnapPointChange,
+}) => {
   const skipGestureRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -84,9 +90,20 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children, snapPoints, setSnap
   );
 
   useEffect(() => {
+    if (!setSnapPoint.forceUpdate) {
+      return;
+    }
+
     skipGestureRef.current = true;
+
+    console.log("run ues effect");
     const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
-    setY({ y: (snapPoints[setSnapPoint] / 100) * sheetHeight });
+    setY({ y: (snapPoints[setSnapPoint.snapPoint] / 100) * sheetHeight });
+
+    // Reset the forceUpdate flag to avoid unwanted sheet movements.
+    if (typeof onSnapPointChange === "function") {
+      onSnapPointChange({ snapPoint: setSnapPoint.snapPoint, forceUpdate: false });
+    }
   }, [setSnapPoint]);
 
   return (
