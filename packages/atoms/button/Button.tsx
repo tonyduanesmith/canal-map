@@ -1,20 +1,27 @@
 import React from "react";
 
 import { StyledButton } from "./styled";
-import { SizeType, IntentType } from "./types";
+import { SizeType, VariantType } from "./types";
 
 export interface Props {
-  children: string;
+  children: string | React.ReactNode;
   size?: SizeType;
   rounded?: boolean;
-  intent?: IntentType;
+  variant?: VariantType;
   fullWidth?: boolean;
   onClick?: () => void;
 }
 
-const Button = ({ children, intent, size = "medium", rounded = false, fullWidth = false, onClick }: Props) => {
+const Button = ({
+  children,
+  variant = "primary",
+  size = "medium",
+  rounded = false,
+  fullWidth = false,
+  onClick,
+}: Props) => {
   return (
-    <StyledButton type="submit" size={size} rounded={rounded} intent={intent} fullWidth={fullWidth} onClick={onClick}>
+    <StyledButton size={size} rounded={rounded} variant={variant} fullWidth={fullWidth} onClick={onClick}>
       {children}
     </StyledButton>
   );

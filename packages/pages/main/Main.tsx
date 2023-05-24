@@ -12,6 +12,8 @@ import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
 import ListItem from "../../atoms/list-item";
+import LocationButton from "../../atoms/location-button/LocationButton";
+import { StyledLocationWrapper } from "./styled";
 
 const Main = () => {
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
@@ -68,7 +70,7 @@ const Main = () => {
   };
 
   return (
-    <Box width="100%" height="100%">
+    <Box width="100%" height="100%" position="relative">
       <Map
         id="canal-map"
         token={import.meta.env.VITE_TOKEN}
@@ -77,6 +79,10 @@ const Main = () => {
         overlays={canalOverlay ?? []}
         centerCoords={selectedCoords}
       />
+      <StyledLocationWrapper>
+        <LocationButton />
+      </StyledLocationWrapper>
+
       <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint}>
         <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
           <Search

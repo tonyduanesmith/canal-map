@@ -1,2 +1,2 @@
 export type SizeType = "small" | "medium" | "large";
-export type IntentType = "danger";
+export type VariantType = "danger" | "primary" | "secondary" | "success" | "warning" | "tertiary";

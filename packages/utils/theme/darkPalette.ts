@@ -1,3 +1,5 @@
+import { lighten, darken } from "polished";
+
 export default {
   background: {
     default: "#282C34",
@@ -25,26 +27,78 @@ export default {
     "19": "#e8e9e9",
     "20": "#ffffff",
   },
+  variants: {
+    danger: {
+      main: "rgb(255, 69,58)",
+      light: lighten(0.2, "rgb(255, 69,58)"),
+      dark: darken(0.2, "rgb(255, 69,58)"),
+    },
+    primary: {
+      main: "rgb(10, 132, 255)",
+      light: lighten(0.2, "rgb(10, 132, 255)"),
+      dark: darken(0.2, "rgb(10, 132, 255)"),
+    },
+    secondary: {
+      main: "rgb(100,210,255)",
+      light: lighten(0.2, "rgb(100,210,255)"),
+      dark: darken(0.2, "rgb(100,210,255)"),
+    },
+    tertiary: {
+      main: "rgba(255, 255, 255, 0.87)",
+      light: lighten(0.2, "rgba(255, 255, 255, 0.87)"),
+      dark: darken(0.1, "rgba(255, 255, 255, 0.87)"),
+    },
+  },
   system: {
-    blue: "rgb(10, 132, 255)",
-    green: "rgb(48,209,88)",
-    indigo: "rgb(94,92,230)",
-    orange: "rgb(255,159,10)",
-    pink: "rgb(255,55,95)",
-    purple: "rgb(191,90,242)",
-    red: "rgb(255, 69,58)",
-    teal: "rgb(100,210,255)",
-    yellow: "rgb(255,214,10)",
+    blue: {
+      main: "rgb(10, 132, 255)",
+      light: lighten(0.2, "rgb(10, 132, 255)"),
+      dark: darken(0.2, "rgb(10, 132, 255)"),
+    },
+    green: {
+      main: "rgb(48,209,88)",
+      light: lighten(0.2, "rgb(48,209,88)"),
+      dark: darken(0.2, "rgb(48,209,88)"),
+    },
+    indigo: {
+      main: "rgb(94,92,230)",
+      light: lighten(0.2, "rgb(94,92,230)"),
+      dark: darken(0.2, "rgb(94,92,230)"),
+    },
+    orange: {
+      main: "rgb(255,159,10)",
+      light: lighten(0.2, "rgb(255,159,10)"),
+      dark: darken(0.2, "rgb(255,159,10)"),
+    },
+    pink: {
+      main: "rgb(255,55,95)",
+      light: lighten(0.2, "rgb(255,55,95)"),
+      dark: darken(0.2, "rgb(255,55,95)"),
+    },
+    purple: {
+      main: "rgb(191,90,242)",
+      light: lighten(0.2, "rgb(191,90,242)"),
+      dark: darken(0.2, "rgb(191,90,242)"),
+    },
+    red: {
+      main: "rgb(255, 69,58)",
+      light: lighten(0.2, "rgb(255, 69,58)"),
+      dark: darken(0.2, "rgb(255, 69,58)"),
+    },
+    teal: {
+      main: "rgb(100,210,255)",
+      light: lighten(0.2, "rgb(100,210,255)"),
+      dark: darken(0.2, "rgb(100,210,255)"),
+    },
+    yellow: {
+      main: "rgb(255,214,10)",
+      light: lighten(0.2, "rgb(255,214,10)"),
+      dark: darken(0.2, "rgb(255,214,10)"),
+    },
   },
   common: {
     black: "#000",
     white: "#fff",
-  },
-  primary: {
-    main: "rgb(48,209,88)",
-  },
-  secondary: {
-    main: "rgb(100,210,255)",
   },
   shadow: [
     "2px 2px 6px 0 rgba(255, 255, 255, 0.06), 2px 2px 6px 0 rgba(18, 25, 35, 0.93)",
