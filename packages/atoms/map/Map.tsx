@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { StyledMapContainer } from "./styled";
-import { gettingGeoCoordinates } from "./utils";
+import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 
@@ -23,10 +23,10 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
     if (isLoaded) {
       const initializeMap = async () => {
         // get current location
-        const result = await gettingGeoCoordinates();
-        const { coords } = result;
+        const result = await getGeoLocationWithCache();
+        const { longitude, latitude } = result;
         const currentRegion = new mapkit.CoordinateRegion(
-          new mapkit.Coordinate(coords.latitude, coords.longitude),
+          new mapkit.Coordinate(latitude, longitude),
           new mapkit.CoordinateSpan(0.167647972, 0.354985255),
         );
 
