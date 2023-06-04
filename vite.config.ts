@@ -12,4 +12,7 @@ export default defineConfig({
   root: src,
   publicDir,
   plugins: [svgr(), react()],
+  build: {
+    chunkSizeWarningLimit: 10000,
+  },
 });
