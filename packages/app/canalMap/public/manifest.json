@@ -1,1 +1,5 @@
-{ "display": "fullscreen" }
+{
+  "name": "Canal Map",
+  "short_name": "Canal Map",
+  "display": "standalone"
+}
