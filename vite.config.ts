@@ -14,5 +14,6 @@ export default defineConfig({
   plugins: [svgr(), react()],
   build: {
     chunkSizeWarningLimit: 10000,
+    outDir: path.resolve(__dirname, "dist"),
   },
 });
