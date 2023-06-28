@@ -112,9 +112,9 @@ const Main = () => {
         overlays={canalOverlay ?? []}
         centerCoords={selectedCoords}
       />
-      <StyledLocationWrapper>
+      {/* <StyledLocationWrapper>
         <LocationButton onClick={handleOnLocationClick} />
-      </StyledLocationWrapper>
+      </StyledLocationWrapper> */}
 
       <BottomSheet
         snapPoints={[0, 50, 80]}
