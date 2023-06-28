@@ -117,7 +117,7 @@ const Main = () => {
       </StyledLocationWrapper> */}
 
       <BottomSheet
-        snapPoints={[0, 50, 80]}
+        snapPoints={[7, 50, 80]}
         setSnapPoint={snapPoint}
         onSnapPointChange={handleSnapPointChange}
         disableGesture={disableGesture}
