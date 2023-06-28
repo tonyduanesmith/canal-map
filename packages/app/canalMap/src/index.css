@@ -30,6 +30,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  -webkit-overflow-scrolling: auto;
+  overscroll-behavior: contain;
 }
 
 h1 {
