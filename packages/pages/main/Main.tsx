@@ -24,7 +24,7 @@ const Main = () => {
   const [snapPoint, setSnapPoint] = useState({ snapPoint: 50, forceUpdate: false });
   const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
-  const isScrollable = snapPoint.snapPoint === 0;
+  const isScrollable = snapPoint.snapPoint === 7;
   const innerListRef = useRef<List>(null);
 
   const canalOverlayStyle = useMemo(() => {

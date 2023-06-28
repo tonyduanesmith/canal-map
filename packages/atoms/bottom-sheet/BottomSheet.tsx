@@ -44,7 +44,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           return;
         }
         const initialY = memo || y.get();
-        if (initialY <= 0 && my < 0) {
+        const limitY = (7 / 100) * ((sheetRef.current?.offsetHeight || 0) - 80);
+        if (initialY <= limitY && my < 0) {
           return;
         }
 
