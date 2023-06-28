@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { FixedSizeList as List } from "react-window";
+import { useState, useMemo, useRef } from "react";
+import { FixedSizeList as List, ListOnScrollProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
 import Map from "../../atoms/map";
@@ -17,11 +17,15 @@ import { StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
 
 const Main = () => {
+  const [firstScroll, setFirstScroll] = useState(true);
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [filterLocks, setFilterLocks] = useState<mapkit.ImageAnnotation[]>([]);
-  const [snapPoint, setSnapPoint] = useState({ snapPoint: 1, forceUpdate: false });
+  const [snapPoint, setSnapPoint] = useState({ snapPoint: 50, forceUpdate: false });
+  const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
+  const isScrollable = snapPoint.snapPoint === 0;
+  const innerListRef = useRef<List>(null);
 
   const canalOverlayStyle = useMemo(() => {
     if (!isLoaded) return null;
@@ -85,6 +89,19 @@ const Main = () => {
     setSnapPoint({ snapPoint: newSnapPoint.snapPoint, forceUpdate: false });
   };
 
+  const handleOnScroll = (scrollProps: ListOnScrollProps) => {
+    if (firstScroll) {
+      setFirstScroll(false);
+      return;
+    }
+
+    if (scrollProps.scrollOffset === 0 && scrollProps.scrollDirection === "backward") {
+      setDisableGesture(false);
+    } else {
+      setDisableGesture(true);
+    }
+  };
+
   return (
     <Box width="100%" height="100%" position="relative">
       <Map
@@ -99,7 +116,12 @@ const Main = () => {
         <LocationButton onClick={handleOnLocationClick} />
       </StyledLocationWrapper>
 
-      <BottomSheet snapPoints={[0, 50, 80]} setSnapPoint={snapPoint} onSnapPointChange={handleSnapPointChange}>
+      <BottomSheet
+        snapPoints={[0, 50, 80]}
+        setSnapPoint={snapPoint}
+        onSnapPointChange={handleSnapPointChange}
+        disableGesture={disableGesture}
+      >
         <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
           <Search
             onSearchFocus={handleOnSearchFocus}
@@ -112,6 +134,9 @@ const Main = () => {
         <AutoSizer>
           {({ height, width }) => (
             <List
+              onScroll={handleOnScroll}
+              innerRef={innerListRef}
+              style={{ overflow: isScrollable ? "auto" : "hidden" }}
               height={(height ?? 0) - 100}
               itemSize={80}
               itemCount={getFilteredLocks?.length ?? 0}

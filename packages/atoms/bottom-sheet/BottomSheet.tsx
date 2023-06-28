@@ -9,19 +9,21 @@ interface BottomSheetProps {
   snapPoints: number[];
   setSnapPoint?: { snapPoint: number; forceUpdate: boolean };
   onSnapPointChange?: (newSnapPoint: { snapPoint: number; forceUpdate: boolean }) => void;
+  disableGesture: boolean;
 }
 
 const BottomSheet: React.FC<BottomSheetProps> = ({
   children,
   snapPoints,
-  setSnapPoint = { snapPoint: 0, forceUpdate: false },
+  setSnapPoint = { snapPoint: 50, forceUpdate: false },
   onSnapPointChange,
+  disableGesture,
 }) => {
   const skipGestureRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const [{ y }, setY] = useSpring(() => ({
-    y: 50,
+    y: 0,
     config: {
       ...config.default,
       tension: 400,
@@ -38,18 +40,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const bind = useGesture(
     {
       onDrag: ({ movement: [, my], memo }) => {
-        if (skipGestureRef.current) {
+        if (skipGestureRef.current || disableGesture) {
           return;
         }
         const initialY = memo || y.get();
         if (initialY <= 0 && my < 0) {
           return;
         }
+
         setY({ y: initialY + my });
         return initialY;
       },
       onDragEnd: ({ velocity, movement: [, my] }) => {
-        if (skipGestureRef.current) {
+        if (skipGestureRef.current || disableGesture) {
           return;
         }
         const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
@@ -81,6 +84,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           getClosestSnapPoint(targetPercentage);
 
         setY({ y: (nextSnapPoint / 100) * sheetHeight });
+        // Reset the forceUpdate flag to avoid unwanted sheet movements.
+        if (onSnapPointChange) {
+          onSnapPointChange({ snapPoint: nextSnapPoint, forceUpdate: false });
+        }
       },
     },
     { drag: { useTouch: true } },
@@ -93,6 +100,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
     skipGestureRef.current = true;
     const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
+
     setY({ y: (snapPoints[setSnapPoint.snapPoint] / 100) * sheetHeight });
 
     setTimeout(() => {
@@ -104,6 +112,12 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       onSnapPointChange({ snapPoint: setSnapPoint.snapPoint, forceUpdate: false });
     }
   }, [setSnapPoint]);
+
+  useEffect(() => {
+    const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80; // Subtract 80 if required
+    const initialY = (snapPoints[1] / 100) * sheetHeight; // Replace 0 with the desired snap point index
+    setY({ y: initialY });
+  }, [setY]);
 
   return (
     <StyledSheet
