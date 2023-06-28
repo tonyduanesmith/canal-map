@@ -17,6 +17,8 @@ interface Props {
 const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
   const mapRef = useRef<mapkit.Map>();
 
+  console.log(import.meta.env.VITE_TOKEN);
+
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
 
   useEffect(() => {
