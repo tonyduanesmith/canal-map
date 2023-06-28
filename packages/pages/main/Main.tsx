@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef } from "react";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
@@ -11,10 +10,9 @@ import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
-import ListItem from "../../atoms/list-item";
-import LocationButton from "../../atoms/location-button/LocationButton";
 import { StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
+import SearchList from "../../organisms/search-list";
 
 const Main = () => {
   const [firstScroll, setFirstScroll] = useState(true);
@@ -67,6 +65,7 @@ const Main = () => {
     setFilterLocks(filterLocks ?? []);
     setSearchValue(value);
   };
+
   if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
@@ -131,22 +130,13 @@ const Main = () => {
           />
           <Button onClick={handleOnSearchCancel}>Cancel</Button>
         </Box>
-        <AutoSizer>
-          {({ height, width }) => (
-            <List
-              onScroll={handleOnScroll}
-              innerRef={innerListRef}
-              style={{ overflow: isScrollable ? "auto" : "hidden" }}
-              height={(height ?? 0) - 100}
-              itemSize={80}
-              itemCount={getFilteredLocks?.length ?? 0}
-              width={width ?? 0}
-              itemData={{ items: getFilteredLocks ?? [], onClick: handleOnListItemClick }}
-            >
-              {ListItem}
-            </List>
-          )}
-        </AutoSizer>
+        <SearchList
+          isScrollable={isScrollable}
+          onScroll={handleOnScroll}
+          itemCount={getFilteredLocks?.length ?? 0}
+          items={getFilteredLocks ?? []}
+          onClick={handleOnListItemClick}
+        />
       </BottomSheet>
     </Box>
   );
