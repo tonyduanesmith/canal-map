@@ -39,7 +39,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const bind = useGesture(
     {
-      onDrag: ({ movement: [, my], memo }) => {
+      onDrag: ({ event, movement: [, my], memo }) => {
+        event.stopPropagation();
         if (skipGestureRef.current || disableGesture) {
           return;
         }
@@ -52,7 +53,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         setY({ y: initialY + my });
         return initialY;
       },
-      onDragEnd: ({ velocity, movement: [, my] }) => {
+      onDragEnd: ({ event, velocity, movement: [, my] }) => {
+        event.stopPropagation();
         if (skipGestureRef.current || disableGesture) {
           return;
         }
