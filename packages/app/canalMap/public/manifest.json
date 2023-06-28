@@ -2,7 +2,5 @@
   "name": "Canal Map",
   "short_name": "Canal Map",
   "display": "standalone",
-  "ios": {
-    "status_bar": "black-translucent"
-  }
+  "viewport-fit": "cover"
 }
