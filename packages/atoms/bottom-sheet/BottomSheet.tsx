@@ -104,7 +104,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     skipGestureRef.current = true;
     const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
 
-    setY({ y: (snapPoints[setSnapPoint.snapPoint] / 100) * sheetHeight });
+    setY({ y: (setSnapPoint.snapPoint / 100) * sheetHeight });
 
     setTimeout(() => {
       skipGestureRef.current = false;

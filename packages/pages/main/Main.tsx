@@ -13,6 +13,7 @@ import Box from "../../atoms/box/Box";
 import { StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
 import SearchList from "../../organisms/search-list";
+import ClosestSection from "../../organisms/closest-section";
 
 const Main = () => {
   const [firstScroll, setFirstScroll] = useState(true);
@@ -23,7 +24,6 @@ const Main = () => {
   const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const isScrollable = snapPoint.snapPoint === 7;
-  const innerListRef = useRef<List>(null);
 
   const canalOverlayStyle = useMemo(() => {
     if (!isLoaded) return null;
@@ -52,10 +52,10 @@ const Main = () => {
   }, [filterLocks, locksAnnotations, searchValue]);
 
   const handleOnSearchCancel = () => {
-    setSnapPoint({ snapPoint: 1, forceUpdate: true });
+    setSnapPoint({ snapPoint: 50, forceUpdate: true });
   };
   const handleOnSearchFocus = () => {
-    setSnapPoint({ snapPoint: 0, forceUpdate: true });
+    setSnapPoint({ snapPoint: 7, forceUpdate: true });
   };
 
   const handleOnSearchChange = async (value: string) => {
@@ -128,15 +128,18 @@ const Main = () => {
             onChange={handleOnSearchChange}
             marginRight="md"
           />
-          <Button onClick={handleOnSearchCancel}>Cancel</Button>
+            <Button onClick={handleOnSearchCancel}>Cancel</Button>
         </Box>
-        <SearchList
-          isScrollable={isScrollable}
-          onScroll={handleOnScroll}
-          itemCount={getFilteredLocks?.length ?? 0}
-          items={getFilteredLocks ?? []}
-          onClick={handleOnListItemClick}
-        />
+        {snapPoint.snapPoint === 7 && (
+          <SearchList
+            isScrollable={isScrollable}
+            onScroll={handleOnScroll}
+            itemCount={getFilteredLocks?.length ?? 0}
+            items={getFilteredLocks ?? []}
+            onClick={handleOnListItemClick}
+          />
+        )}
+        {snapPoint.snapPoint !== 7 && <ClosestSection />}
       </BottomSheet>
     </Box>
   );
