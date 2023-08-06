@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { TypographyProps } from "./Typography";
+import Box from "../box";
 
 type StyledTypographyProps = Omit<TypographyProps, "children">;
 
@@ -38,7 +39,15 @@ const subtitle = css`
   font-weight: ${p => p.theme.typography.fontWeight.regular};
 `;
 
-export const StyledTypography = styled.div<StyledTypographyProps>`
+const overflowEllipsis = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 0 1 auto;
+`;
+
+
+export const StyledTypography = styled(Box)<StyledTypographyProps>`
   font-family: ${p => p.theme.typography.fontFamily};
 
   ${p => p.variant === "h1" && h1};
@@ -49,4 +58,5 @@ export const StyledTypography = styled.div<StyledTypographyProps>`
   ${p => p.variant === "h6" && h6};
   ${p => p.variant === "subtitle" && subtitle};
   ${p => p.bold && `font-weight: ${p.theme.typography.fontWeight.bold}`};
+  ${p => p.overflow && overflowEllipsis};
 `;

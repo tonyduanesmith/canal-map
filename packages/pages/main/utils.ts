@@ -45,3 +45,62 @@ export const getGeoJsonToOverlays = (data: GeoJSON.FeatureCollection, style: map
   });
   return overlays;
 };
+
+// export const getTheClosestAnnotation = (currentLocation: GeolocationCoordinates, annotaions: mapkit.Annotation[] | null): mapkit.Annotation => {
+//   if (!annotaions) {
+//     throw new Error("Annotation is null");
+//   }
+//   const currentLocationCoordinate = new mapkit.Coordinate(currentLocation.latitude, currentLocation.longitude);
+//   const distances = annotaions.map(annotation => {
+//     const distance = annotation.coordinate.distanceTo(currentLocationCoordinate);
+//     return {
+//       annotation,
+//       distance,
+//     };
+//   });
+//   const sortedDistances = distances.sort((a, b) => a.distance - b.distance);
+//   return sortedDistances[0].annotation;
+
+// };
+
+export type ClosestLocation = {
+  location: mapkit.Annotation | null,
+  distance: number
+};
+
+const toRadians = (angle: number) => {
+  return angle * (Math.PI / 180);
+}
+
+const getDistanceInMiles = (coord1: GeolocationCoordinates, coord2: GeolocationCoordinates) => {
+  const R = 3958.8; // Radius of the earth in miles
+  const dLat = toRadians(coord2.latitude - coord1.latitude);
+  const dLon = toRadians(coord2.longitude - coord1.longitude);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(coord1.latitude)) * Math.cos(toRadians(coord2.latitude)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in miles
+}
+
+export const getClosestLocation = (currentLocation: GeolocationCoordinates, locations: mapkit.Annotation[]): ClosestLocation | null => {
+  if (locations.length === 0) {
+    return null;
+  }
+
+  return locations.reduce<ClosestLocation>((closest, location) => {
+    const coordinates: GeolocationCoordinates = {
+      latitude: location.coordinate.latitude,
+      longitude: location.coordinate.longitude,
+      accuracy: 0,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null
+    };
+
+    const distance = getDistanceInMiles(currentLocation, coordinates);
+    return (distance < closest.distance) ? { location, distance } : closest;
+  }, { location: locations[0], distance: Infinity }); // Initialize with first location
+}

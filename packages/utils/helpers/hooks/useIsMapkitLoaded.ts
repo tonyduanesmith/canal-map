@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 export const useIsMapkitLoaded = ({ token }: { token: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);

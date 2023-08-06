@@ -5,8 +5,8 @@ import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
-import { getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
-import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
+import { getClosestLocation, getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
+import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
@@ -24,6 +24,7 @@ const Main = () => {
   const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const isScrollable = snapPoint.snapPoint === 7;
+  const { currentLocation } = useCurrentLocation();
 
   const canalOverlayStyle = useMemo(() => {
     if (!isLoaded) return null;
@@ -65,6 +66,9 @@ const Main = () => {
     setFilterLocks(filterLocks ?? []);
     setSearchValue(value);
   };
+
+  const closestLock = getClosestLocation(currentLocation, locksAnnotations ?? []);
+
 
   if (!isLoaded) return null;
 
@@ -139,7 +143,7 @@ const Main = () => {
             onClick={handleOnListItemClick}
           />
         )}
-        {snapPoint.snapPoint !== 7 && <ClosestSection />}
+        {snapPoint.snapPoint !== 7 && <ClosestSection closestLock={closestLock}  />}
       </BottomSheet>
     </Box>
   );
