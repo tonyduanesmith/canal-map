@@ -4,6 +4,7 @@ import LockCircleIcon from "../../atoms/icons/lock-circle";
 import ListItem from "../../atoms/list-item";
 import Typography from "../../atoms/typography";
 import { ClosestLocation } from  "../../pages/main/utils";
+import { removeLockPattern } from "./utils";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
@@ -11,7 +12,7 @@ interface ClosestSectionProps {
 }
 
 const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
-  const lockName = closestLock?.location?.title;
+  const lockName =  removeLockPattern(closestLock?.location?.title ?? '');
   const lockDistance = Math.ceil(closestLock?.distance ?? 0).toString();
   return (
     <Box marginTop="md">

@@ -10,7 +10,8 @@ export const StyledSearch = styled.input`
   height: ${({ theme }) => theme.spacing.lg};
   border-radius: ${({ theme }) => theme.shape.borderRadius.medium};
   border: none;
-  padding-left: ${({ theme }) => theme.spacing.lg};
+  padding-left: 34px;
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 export const StyledSearchIcon = styled(SearchIcon)`

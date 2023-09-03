@@ -4,6 +4,7 @@ import spacing from "./spacing";
 import size from "./size";
 import shape from "./shape";
 import typography from "./typography";
+import font from "./font";
 
 const dark = {
   palette: darkPalette,
@@ -11,6 +12,7 @@ const dark = {
   size,
   shape,
   typography,
+  font,
 };
 
 const light = {
@@ -19,6 +21,7 @@ const light = {
   size,
   shape,
   typography,
+  font,
 };
 
 const theme = {
