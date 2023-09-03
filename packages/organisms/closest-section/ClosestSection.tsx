@@ -4,7 +4,7 @@ import LockCircleIcon from "../../atoms/icons/lock-circle";
 import ListItem from "../../atoms/list-item";
 import Typography from "../../atoms/typography";
 import { ClosestLocation } from  "../../pages/main/utils";
-import { removeLockPattern } from "./utils";
+import { milesToMinutes, removeLockPattern } from "./utils";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
@@ -13,7 +13,9 @@ interface ClosestSectionProps {
 
 const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
   const lockName =  removeLockPattern(closestLock?.location?.title ?? '');
-  const lockDistance = Math.ceil(closestLock?.distance ?? 0).toString();
+  const lockDistanceMiles = Math.ceil(closestLock?.distance ?? 0)
+  const lockDistanceMinutes = milesToMinutes(lockDistanceMiles)
+  console.log(lockDistanceMinutes)
   return (
     <Box marginTop="md">
       <Typography variant="h4">Nearest</Typography>
@@ -23,7 +25,7 @@ const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
             <LockCircleIcon />
           </Box>
           <Typography width="96px" overflow>{lockName}</Typography>
-          <Typography bold>{`${lockDistance} mi`}</Typography>
+          <Typography bold>{`${lockDistanceMiles} mi/${lockDistanceMinutes} mins`}</Typography>
         </Box>
       </Card>
     </Box>
