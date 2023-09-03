@@ -25,6 +25,7 @@ export interface BoxProps {
   marginLeft?: Spacing;
   children?: ReactNode;
   style?: CSSProperties;
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export const StyledBox = styled.div<BoxProps>`

@@ -73,7 +73,7 @@ const Main = () => {
   if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
-    setSnapPoint({ snapPoint: 2, forceUpdate: true });
+    setSnapPoint({ snapPoint: 80, forceUpdate: true });
     setSelectedCoords(annotation.coordinate);
   };
 
@@ -143,7 +143,7 @@ const Main = () => {
             onClick={handleOnListItemClick}
           />
         )}
-        {snapPoint.snapPoint !== 7 && <ClosestSection closestLock={closestLock}  />}
+        {snapPoint.snapPoint !== 7 && <ClosestSection closestLock={closestLock} onClick={handleOnListItemClick}  />}
       </BottomSheet>
     </Box>
   );

@@ -7,20 +7,21 @@ import { ClosestLocation } from  "../../pages/main/utils";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
+  onClick: (item: any) => void;
 }
 
-const ClosestSection = ({closestLock}: ClosestSectionProps) => {
+const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
   const lockName = closestLock?.location?.title;
   const lockDistance = Math.ceil(closestLock?.distance ?? 0).toString();
   return (
     <Box marginTop="md">
       <Typography variant="h4">Nearest</Typography>
       <Card padding="md" display="flex">
-        <Box display="flex" flexDirection="column" alignItems="center" >
+        <Box display="flex" flexDirection="column" alignItems="center" onClick={() => onClick(closestLock?.location)}>
           <Box height="50px" width="50px">
             <LockCircleIcon />
           </Box>
-          <Typography width="96px" overflow>{closestLock?.location?.title}</Typography>
+          <Typography width="96px" overflow>{lockName}</Typography>
           <Typography bold>{`${lockDistance} mi`}</Typography>
         </Box>
       </Card>
