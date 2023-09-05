@@ -75,7 +75,7 @@ const Main = () => {
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setTimeout(() => {
-        setSnapPoint({ snapPoint: 80, forceUpdate: true });
+        setSnapPoint({ snapPoint: 70, forceUpdate: true });
     }, 16);
     setSelectedCoords(annotation.coordinate);
     setDisableGesture(false);
@@ -127,7 +127,7 @@ const Main = () => {
       </StyledLocationWrapper> */}
 
       <BottomSheet
-        snapPoints={[7, 50, 80]}
+        snapPoints={[7, 50, 70]}
         setSnapPoint={snapPoint}
         onSnapPointChange={handleSnapPointChange}
         disableGesture={disableGesture}
