@@ -54,6 +54,7 @@ const Main = () => {
 
   const handleOnSearchCancel = () => {
     setSnapPoint({ snapPoint: 50, forceUpdate: true });
+    setDisableGesture(false);
   };
   const handleOnSearchFocus = () => {
     setSnapPoint({ snapPoint: 7, forceUpdate: true });
@@ -75,6 +76,7 @@ const Main = () => {
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setSnapPoint({ snapPoint: 80, forceUpdate: true });
     setSelectedCoords(annotation.coordinate);
+    setDisableGesture(false);
   };
 
   const handleOnLocationClick = async () => {
@@ -90,6 +92,9 @@ const Main = () => {
 
   const handleSnapPointChange = (newSnapPoint: { snapPoint: number; forceUpdate: boolean }) => {
     setSnapPoint({ snapPoint: newSnapPoint.snapPoint, forceUpdate: false });
+    if (newSnapPoint.snapPoint === 7) {
+      setFirstScroll(true);
+    }
   };
 
   const handleOnScroll = (scrollProps: ListOnScrollProps) => {
