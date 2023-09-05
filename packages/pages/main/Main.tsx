@@ -74,7 +74,9 @@ const Main = () => {
   if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
-    setSnapPoint({ snapPoint: 80, forceUpdate: true });
+    setTimeout(() => {
+        setSnapPoint({ snapPoint: 80, forceUpdate: true });
+    }, 16);
     setSelectedCoords(annotation.coordinate);
     setDisableGesture(false);
   };
