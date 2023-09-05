@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-
 import { StyledMapContainer } from "./styled";
 import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
@@ -16,13 +15,25 @@ interface Props {
 
 const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
   const mapRef = useRef<mapkit.Map>();
-
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
+  const zoomThreshold = new mapkit.CoordinateSpan(0.2, 0.2);
+
+  const handleZoomChange = () => {
+    const currentSpan = mapRef.current?.region.span;
+
+    if ((currentSpan?.latitudeDelta ?? 0) < zoomThreshold.latitudeDelta && 
+        (currentSpan?.longitudeDelta ?? 0) < zoomThreshold.longitudeDelta) {
+        // Show annotations
+        mapRef.current?.addAnnotations(annotations);
+    } else {
+        // Hide annotations
+        mapRef.current?.removeAnnotations(annotations);
+    }
+  }
 
   useEffect(() => {
     if (isLoaded) {
       const initializeMap = async () => {
-        // get current location
         const result = await getGeoLocationWithCache();
         const { longitude, latitude } = result;
         const currentRegion = new mapkit.CoordinateRegion(
@@ -30,10 +41,10 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
           new mapkit.CoordinateSpan(0.167647972, 0.354985255),
         );
 
-        // Create a map in the element whose ID is "map-container"
         if (mapRef.current === undefined) {
           mapRef.current = new mapkit.Map(id);
         }
+
         if (mapRef.current) {
           mapRef.current.annotationForCluster = clusterAnnotation => {
             if (clusterAnnotation.clusteringIdentifier === "lock") {
@@ -51,12 +62,13 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
               });
             }
           };
+
           mapRef.current.region = currentRegion;
           mapRef.current.showsUserLocation = showsUserLocation;
 
-          // Add overlays and annotations to the map
           mapRef.current.addOverlays(overlays);
-          mapRef.current.addAnnotations(annotations);
+
+          mapRef.current.addEventListener('region-change-end', handleZoomChange);
         }
       };
 

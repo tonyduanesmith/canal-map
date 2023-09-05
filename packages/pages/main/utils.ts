@@ -7,13 +7,13 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
     const coords = new mapkit.Coordinate(latitude, longitude);
     const angle = feature.properties?.ANGLE ?? 0;
     const annotation = new mapkit.ImageAnnotation(coords, {
-      url: { 1: lockImageArray[0] },
+      url: { 1: lockImageArray[angle] },
       size: {
         width: 30,
         height: 30,
       },
       data: {
-        angle:0,
+        angle,
       },
       anchorOffset: new DOMPoint(0, -15),
       clusteringIdentifier: "lock",
