@@ -15,7 +15,6 @@ const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
   const lockName =  removeLockPattern(closestLock?.location?.title ?? '');
   const lockDistanceMiles = Math.ceil(closestLock?.distance ?? 0)
   const lockDistanceMinutes = milesToMinutes(lockDistanceMiles)
-  console.log(lockDistanceMinutes)
   return (
     <Box marginTop="md">
       <Typography variant="h4">Nearest</Typography>
