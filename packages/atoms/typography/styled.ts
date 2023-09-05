@@ -58,5 +58,5 @@ export const StyledTypography = styled(Box)<StyledTypographyProps>`
   ${p => p.variant === "h6" && h6};
   ${p => p.variant === "subtitle" && subtitle};
   ${p => p.bold && `font-weight: ${p.theme.typography.fontWeight.bold}`};
-  ${p => p.overflow && overflowEllipsis};
+  ${p => p.textOverflow && overflowEllipsis};
 `;

@@ -24,7 +24,7 @@ const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
           <Box height="50px" width="50px">
             <LockCircleIcon />
           </Box>
-          <Typography width="96px" overflow>{lockName}</Typography>
+          <Typography width="96px" textOverflow>{lockName}</Typography>
           <Typography bold>{`${lockDistanceMiles} mi/${lockDistanceMinutes} mins`}</Typography>
         </Box>
       </Card>

@@ -5,12 +5,12 @@ export interface TypographyProps extends BoxProps {
   variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle";
   children?: string;
   bold?: boolean;
-  overflow?: boolean;
+  textOverflow?: boolean;
 }
 
-const Typography = ({ variant, bold, children, overflow = false, ...rest }: TypographyProps) => {
+const Typography = ({ variant, bold, children, textOverflow = false, ...rest }: TypographyProps) => {
   return (
-    <StyledTypography variant={variant} bold={bold} overflow={overflow} {...rest}>
+    <StyledTypography variant={variant} bold={bold} textOverflow={textOverflow} {...rest}>
       {children}
     </StyledTypography>
   );
