@@ -5,7 +5,8 @@ import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
-import { getClosestLocation, getGeoJsonLockToAnnotations, getGeoJsonToOverlays } from "./utils";
+import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
+import { getClosestLocation, getGeoJsonLockToAnnotations, getGeoJsonToOverlays, getGeoJsonWindingToAnnotations } from "./utils";
 import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
@@ -38,12 +39,17 @@ const Main = () => {
   }, [isLoaded]);
 
   const locksAnnotations = useMemo(() => {
-    if (!isLoaded) return null;
-    return getGeoJsonLockToAnnotations(locksGeoJSON as GeoJSON.FeatureCollection);
+    if (!isLoaded) return [];
+    return getGeoJsonLockToAnnotations(locksGeoJSON as GeoJSON.FeatureCollection) ?? [];
   }, [locksGeoJSON, isLoaded]);
 
+  const windingAnnotations = useMemo(() => {
+    if (!isLoaded) return [];
+    return getGeoJsonWindingToAnnotations(windingGeoJSON as GeoJSON.FeatureCollection) ?? [];
+  }, [windingGeoJSON, isLoaded]);
+
   const canalOverlay = useMemo(() => {
-    if (!isLoaded || !canalOverlayStyle) return null;
+    if (!isLoaded || !canalOverlayStyle) return [];
     return getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
   }, [canalGeoJSON, canalOverlayStyle, isLoaded]);
 
@@ -118,8 +124,8 @@ const Main = () => {
         id="canal-map"
         token={import.meta.env.VITE_TOKEN}
         showsUserLocation
-        annotations={locksAnnotations ?? []}
-        overlays={canalOverlay ?? []}
+        annotations={[...locksAnnotations, ...windingAnnotations]}
+        overlays={canalOverlay}
         centerCoords={selectedCoords}
       />
       {/* <StyledLocationWrapper>

@@ -1,4 +1,5 @@
 import lockImageArray from "../../atoms/icons/lock";
+import windingImage from "../../atoms/icons/winding/winding.svg";
 
 export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => {
   return data.features.map(feature => {
@@ -17,6 +18,25 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       },
       anchorOffset: new DOMPoint(0, -15),
       clusteringIdentifier: "lock",
+      title: feature.properties?.sap_description ?? "",
+    });
+    return annotation;
+  });
+};
+
+export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) => {
+  return data.features.map(feature => {
+    const geometry = feature.geometry as GeoJSON.Point;
+    const [longitude, latitude] = geometry.coordinates;
+    const coords = new mapkit.Coordinate(latitude, longitude);
+    const annotation = new mapkit.ImageAnnotation(coords, {
+      url: { 1: windingImage },
+      size: {
+        width: 30,
+        height: 30,
+      },
+      anchorOffset: new DOMPoint(0, -15),
+      clusteringIdentifier: "winding",
       title: feature.properties?.SAP_DESCRIPTION ?? "",
     });
     return annotation;

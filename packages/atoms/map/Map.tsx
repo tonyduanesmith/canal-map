@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { StyledMapContainer } from "./styled";
 import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
+import windingImage from "../icons/winding/winding.svg";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 
 interface Props {
@@ -52,6 +53,19 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
               return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
                 url: {
                   1: lockClusterImageArray[angle],
+                },
+                size: {
+                  width: 30,
+                  height: 30,
+                },
+                anchorOffset: new DOMPoint(0, -15),
+                animates: false,
+              });
+            }
+            if (clusterAnnotation.clusteringIdentifier === "winding") {
+              return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
+                url: {
+                  1: windingImage,
                 },
                 size: {
                   width: 30,
