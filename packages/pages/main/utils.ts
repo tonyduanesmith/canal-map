@@ -18,7 +18,7 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       },
       anchorOffset: new DOMPoint(0, -15),
       clusteringIdentifier: "lock",
-      title: feature.properties?.sap_description ?? "",
+      title: feature.properties?.SAP_DESCRIPTION ?? "",
     });
     return annotation;
   });
@@ -37,7 +37,7 @@ export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) 
       },
       anchorOffset: new DOMPoint(0, -15),
       clusteringIdentifier: "winding",
-      title: feature.properties?.SAP_DESCRIPTION ?? "",
+      title: feature.properties?.sap_descriptions ?? "",
     });
     return annotation;
   });
