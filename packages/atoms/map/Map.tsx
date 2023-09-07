@@ -17,7 +17,7 @@ interface Props {
 const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
   const mapRef = useRef<mapkit.Map>();
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
-  const zoomThreshold = new mapkit.CoordinateSpan(0.3, 0.3);
+  const zoomThreshold = new mapkit.CoordinateSpan(0.5, 0.5);
 
   const handleZoomChange = () => {
     const currentSpan = mapRef.current?.region.span;
@@ -79,7 +79,7 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
 
           mapRef.current.region = currentRegion;
           mapRef.current.showsUserLocation = showsUserLocation;
-
+          mapRef.current?.addAnnotations(annotations);
           mapRef.current.addOverlays(overlays);
 
           mapRef.current.addEventListener('region-change-end', handleZoomChange);
