@@ -8,6 +8,6 @@ export const removeLockPattern = (inputString: string): string => {
     return inputString.replace(/Lock \d+,? ?/g, '').trim();
 }
 
-export const milesToMinutes = (miles: number): number => {
-    return (miles / 4) * 60;
+export const milesToMinutes = (miles: number): string => {
+    return ((miles / 3) * 60).toFixed(1);
 }

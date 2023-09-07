@@ -13,7 +13,7 @@ interface ClosestSectionProps {
 
 const ClosestSection = ({closestLock, onClick}: ClosestSectionProps) => {
   const lockName =  removeLockPattern(closestLock?.location?.title ?? '');
-  const lockDistanceMiles = Math.ceil(closestLock?.distance ?? 0)
+  const lockDistanceMiles = parseFloat((closestLock?.distance ?? 0).toFixed(1));
   const lockDistanceMinutes = milesToMinutes(lockDistanceMiles)
   return (
     <Box marginTop="md">
