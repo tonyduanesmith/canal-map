@@ -48,6 +48,10 @@ const Main = () => {
     return getGeoJsonWindingToAnnotations(windingGeoJSON as GeoJSON.FeatureCollection) ?? [];
   }, [windingGeoJSON, isLoaded]);
 
+  const combinedAnnotations = useMemo(() => {
+  return [...locksAnnotations, ...windingAnnotations];
+}, [locksAnnotations, windingAnnotations]);
+
   const canalOverlay = useMemo(() => {
     if (!isLoaded || !canalOverlayStyle) return [];
     return getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
@@ -83,6 +87,7 @@ const Main = () => {
     setTimeout(() => {
         setSnapPoint({ snapPoint: 70, forceUpdate: true });
     }, 16);
+    console.log(annotation.coordinate)
     setSelectedCoords(annotation.coordinate);
     setDisableGesture(false);
   };
@@ -124,7 +129,7 @@ const Main = () => {
         id="canal-map"
         token={import.meta.env.VITE_TOKEN}
         showsUserLocation
-        annotations={[...locksAnnotations, ...windingAnnotations]}
+        annotations={combinedAnnotations}
         overlays={canalOverlay}
         centerCoords={selectedCoords}
       />
