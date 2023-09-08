@@ -6,7 +6,12 @@ import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
-import { getClosestLocation, getGeoJsonLockToAnnotations, getGeoJsonToOverlays, getGeoJsonWindingToAnnotations } from "./utils";
+import {
+  getClosestLocation,
+  getGeoJsonLockToAnnotations,
+  getGeoJsonToOverlays,
+  getGeoJsonWindingToAnnotations,
+} from "./utils";
 import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
@@ -49,8 +54,8 @@ const Main = () => {
   }, [windingGeoJSON, isLoaded]);
 
   const combinedAnnotations = useMemo(() => {
-  return [...locksAnnotations, ...windingAnnotations];
-}, [locksAnnotations, windingAnnotations]);
+    return [...locksAnnotations, ...windingAnnotations];
+  }, [locksAnnotations, windingAnnotations]);
 
   const canalOverlay = useMemo(() => {
     if (!isLoaded || !canalOverlayStyle) return [];
@@ -79,15 +84,15 @@ const Main = () => {
   };
 
   const closestLock = getClosestLocation(currentLocation, locksAnnotations ?? []);
-
+  const closestWinding = getClosestLocation(currentLocation, windingAnnotations ?? []);
 
   if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setTimeout(() => {
-        setSnapPoint({ snapPoint: 70, forceUpdate: true });
+      setSnapPoint({ snapPoint: 70, forceUpdate: true });
     }, 16);
-    console.log(annotation.coordinate)
+    console.log(annotation.coordinate);
     setSelectedCoords(annotation.coordinate);
     setDisableGesture(false);
   };
@@ -150,7 +155,7 @@ const Main = () => {
             onChange={handleOnSearchChange}
             marginRight="md"
           />
-            <Button onClick={handleOnSearchCancel}>Cancel</Button>
+          <Button onClick={handleOnSearchCancel}>Cancel</Button>
         </Box>
         {snapPoint.snapPoint === 7 && (
           <SearchList
@@ -161,7 +166,9 @@ const Main = () => {
             onClick={handleOnListItemClick}
           />
         )}
-        {snapPoint.snapPoint !== 7 && <ClosestSection closestLock={closestLock} onClick={handleOnListItemClick}  />}
+        {snapPoint.snapPoint !== 7 && (
+          <ClosestSection closestLock={closestLock} onClick={handleOnListItemClick} closestWinding={closestWinding} />
+        )}
       </BottomSheet>
     </Box>
   );
