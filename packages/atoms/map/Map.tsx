@@ -55,10 +55,10 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
                   1: lockClusterImageArray[angle],
                 },
                 size: {
-                  width: 30,
-                  height: 30,
+                  width: 20,
+                  height: 20,
                 },
-                anchorOffset: new DOMPoint(0, -15),
+                anchorOffset: new DOMPoint(0, -10),
                 animates: false,
               });
             }
@@ -68,10 +68,10 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
                   1: windingImage,
                 },
                 size: {
-                  width: 30,
-                  height: 30,
+                  width: 20,
+                  height: 20,
                 },
-                anchorOffset: new DOMPoint(0, -15),
+                anchorOffset: new DOMPoint(0, -10),
                 animates: false,
               });
             }

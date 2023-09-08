@@ -10,13 +10,13 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
     const annotation = new mapkit.ImageAnnotation(coords, {
       url: { 1: lockImageArray[angle] },
       size: {
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
       },
       data: {
         angle,
       },
-      anchorOffset: new DOMPoint(0, -15),
+      anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "lock",
       title: feature.properties?.SAP_DESCRIPTION ?? "",
     });
@@ -32,10 +32,10 @@ export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) 
     const annotation = new mapkit.ImageAnnotation(coords, {
       url: { 1: windingImage },
       size: {
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
       },
-      anchorOffset: new DOMPoint(0, -15),
+      anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "winding",
       title: feature.properties?.sap_descriptions ?? "",
     });
