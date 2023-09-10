@@ -118,7 +118,7 @@ const toRadians = (angle: number) => {
   return angle * (Math.PI / 180);
 };
 
-const getDistanceInMiles = (coord1: GeolocationCoordinates, coord2: GeolocationCoordinates) => {
+export const getDistanceInMiles = (coord1: GeolocationCoordinates, coord2: GeolocationCoordinates) => {
   const R = 3958.8; // Radius of the earth in miles
   const dLat = toRadians(coord2.latitude - coord1.latitude);
   const dLon = toRadians(coord2.longitude - coord1.longitude);

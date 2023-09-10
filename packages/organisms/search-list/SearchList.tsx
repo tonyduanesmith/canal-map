@@ -10,9 +10,17 @@ interface SearchListProps {
   itemCount: number;
   items: any[];
   onClick: (item: any) => void;
+  currentLocation: GeolocationCoordinates;
 }
 
-const SearchList = ({ isScrollable, onScroll, itemCount = 0, items = [], onClick }: SearchListProps) => {
+const SearchList = ({
+  isScrollable,
+  onScroll,
+  itemCount = 0,
+  items = [],
+  onClick,
+  currentLocation,
+}: SearchListProps) => {
   const innerListRef = useRef<List>(null);
   return (
     <AutoSizer>
@@ -25,7 +33,7 @@ const SearchList = ({ isScrollable, onScroll, itemCount = 0, items = [], onClick
           itemSize={80}
           itemCount={itemCount}
           width={width ?? 0}
-          itemData={{ items, onClick }}
+          itemData={{ items, onClick, currentLocation }}
         >
           {ListItem}
         </List>

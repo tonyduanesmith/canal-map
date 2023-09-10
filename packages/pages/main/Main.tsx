@@ -172,6 +172,7 @@ const Main = () => {
             itemCount={getFilteredAnnotations?.length ?? 0}
             items={getFilteredAnnotations ?? []}
             onClick={handleOnListItemClick}
+            currentLocation={currentLocation}
           />
         )}
         {snapPoint.snapPoint !== 7 && (

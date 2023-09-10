@@ -2,7 +2,6 @@ import Box from "../../atoms/box";
 import Card from "../../atoms/card";
 import LockCircleIcon from "../../atoms/icons/lock-circle";
 import WindingCircleIcon from "../../atoms/icons/winding-circle";
-import ListItem from "../../atoms/list-item";
 import Typography from "../../atoms/typography";
 import { ClosestLocation } from "../../pages/main/utils";
 import { milesToMinutes, removeLockPattern } from "./utils";
