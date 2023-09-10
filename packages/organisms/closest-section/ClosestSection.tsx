@@ -6,6 +6,7 @@ import ListItem from "../../atoms/list-item";
 import Typography from "../../atoms/typography";
 import { ClosestLocation } from "../../pages/main/utils";
 import { milesToMinutes, removeLockPattern } from "./utils";
+import theme from "../../utils/theme";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
@@ -17,7 +18,6 @@ const ClosestSection = ({ closestLock, onClick, closestWinding }: ClosestSection
   const lockName = removeLockPattern(closestLock?.location?.title ?? "");
   const lockDistanceMiles = parseFloat((closestLock?.distance ?? 0).toFixed(1));
   const lockDistanceMinutes = milesToMinutes(lockDistanceMiles);
-  console.log(closestWinding);
   const windingName = closestWinding?.location?.title ?? "";
   const windingDistanceMiles = parseFloat((closestWinding?.distance ?? 0).toFixed(1));
   const windingDistanceMinutes = milesToMinutes(windingDistanceMiles);
@@ -47,7 +47,7 @@ const ClosestSection = ({ closestLock, onClick, closestWinding }: ClosestSection
           onClick={() => onClick(closestWinding?.location)}
         >
           <Box height="50px" width="50px">
-            <WindingCircleIcon />
+            <WindingCircleIcon backgroundColor={theme.dark.palette.system.blue.main} />
           </Box>
           <Typography width="96px" textOverflow>
             {windingName}

@@ -30,6 +30,7 @@ const WindingCircleIcon = ({ color = "#fff", backgroundColor = "#000" }: Props) 
           strokeWidth: "67.6px",
         }}
         transform="matrix(.73964 0 0 .73964 47.111 46.54)"
+        fill={backgroundColor}
       />
       <path
         d="m322.029 110.794-68.695-75.472 68.695 75.472Z"
@@ -38,6 +39,7 @@ const WindingCircleIcon = ({ color = "#fff", backgroundColor = "#000" }: Props) 
           strokeWidth: "63.55px",
         }}
         transform="matrix(.88356 0 0 .67636 63.416 93.105)"
+        fill={backgroundColor}
       />
       <path
         d="m322.029 110.794-68.695-75.472 68.695 75.472Z"
@@ -46,6 +48,7 @@ const WindingCircleIcon = ({ color = "#fff", backgroundColor = "#000" }: Props) 
           strokeWidth: "63.55px",
         }}
         transform="matrix(0 .88356 -.67636 0 370.6 -53.373)"
+        fill={backgroundColor}
       />
     </svg>
   );
