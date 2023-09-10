@@ -1,6 +1,50 @@
 import { lighten, darken } from "polished";
 
-export default {
+type ColorVariants = {
+  main: string;
+  light: string;
+  dark: string;
+};
+
+type Neutrals = {
+  [key: string]: string;
+};
+
+export type SystemColors = {
+  blue: ColorVariants;
+  green: ColorVariants;
+  indigo: ColorVariants;
+  orange: ColorVariants;
+  pink: ColorVariants;
+  purple: ColorVariants;
+  red: ColorVariants;
+  teal: ColorVariants;
+  yellow: ColorVariants;
+  black: ColorVariants;
+};
+
+type ThemeType = {
+  background: {
+    default: string;
+  };
+  neutrals: Neutrals;
+  variants: {
+    danger: ColorVariants;
+    primary: ColorVariants;
+    secondary: ColorVariants;
+    tertiary: ColorVariants;
+  };
+  system: SystemColors;
+  common: {
+    black: string;
+    white: string;
+  };
+  shadow: string[];
+  insetShadow: string[];
+  divider: string;
+};
+
+const theme: ThemeType = {
   background: {
     default: "#282C34",
   },
@@ -95,6 +139,11 @@ export default {
       light: lighten(0.2, "rgb(255,214,10)"),
       dark: darken(0.2, "rgb(255,214,10)"),
     },
+    black: {
+      main: "rgb(0,0,0)",
+      light: lighten(0.2, "rgb(0,0,0)"),
+      dark: darken(0.2, "rgb(0,0,0)"),
+    },
   },
   common: {
     black: "#000",
@@ -112,3 +161,5 @@ export default {
   ],
   divider: "rgba(0, 0, 0, 0.1)",
 };
+
+export default theme;

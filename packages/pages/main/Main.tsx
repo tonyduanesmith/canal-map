@@ -27,7 +27,7 @@ const Main = () => {
   const [firstScroll, setFirstScroll] = useState(true);
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
   const [searchValue, setSearchValue] = useState("");
-  const [filterLocks, setFilterLocks] = useState<mapkit.ImageAnnotation[]>([]);
+  const [filteredAnnotations, setFilteredAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
   const [snapPoint, setSnapPoint] = useState({ snapPoint: 50, forceUpdate: false });
   const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
@@ -69,10 +69,10 @@ const Main = () => {
     return getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
   }, [canalGeoJSON, canalOverlayStyle, isLoaded]);
 
-  const getFilteredLocks = useMemo(() => {
-    if (!searchValue) return locksAnnotations;
-    return filterLocks;
-  }, [filterLocks, locksAnnotations, searchValue]);
+  const getFilteredAnnotations = useMemo(() => {
+    if (!searchValue) return combinedAnnotations;
+    return filteredAnnotations;
+  }, [filteredAnnotations, combinedAnnotations, searchValue]);
 
   const handleOnSearchCancel = () => {
     setSnapPoint({ snapPoint: 50, forceUpdate: true });
@@ -83,10 +83,10 @@ const Main = () => {
   };
 
   const handleOnSearchChange = async (value: string) => {
-    const filterLocks = locksAnnotations?.filter(annotation =>
+    const filteredAnnotations = combinedAnnotations?.filter(annotation =>
       annotation.title.toLowerCase().includes(value.toLowerCase()),
     );
-    setFilterLocks(filterLocks ?? []);
+    setFilteredAnnotations(filteredAnnotations ?? []);
     setSearchValue(value);
   };
 
@@ -169,8 +169,8 @@ const Main = () => {
           <SearchList
             isScrollable={isScrollable}
             onScroll={handleOnScroll}
-            itemCount={getFilteredLocks?.length ?? 0}
-            items={getFilteredLocks ?? []}
+            itemCount={getFilteredAnnotations?.length ?? 0}
+            items={getFilteredAnnotations ?? []}
             onClick={handleOnListItemClick}
           />
         )}

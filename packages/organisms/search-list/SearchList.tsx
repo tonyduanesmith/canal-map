@@ -14,7 +14,6 @@ interface SearchListProps {
 
 const SearchList = ({ isScrollable, onScroll, itemCount = 0, items = [], onClick }: SearchListProps) => {
   const innerListRef = useRef<List>(null);
-
   return (
     <AutoSizer>
       {({ height, width }) => (

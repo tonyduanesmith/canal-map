@@ -15,6 +15,7 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       },
       data: {
         angle,
+        color: "black",
       },
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "lock",
@@ -38,6 +39,9 @@ export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) 
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "winding",
       title: feature.properties?.sap_description ?? "",
+      data: {
+        color: "orange",
+      },
     });
     return annotation;
   });
@@ -57,6 +61,9 @@ export const getGeoJsonToTrainsAnnotations = (data: GeoJSON.FeatureCollection) =
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "trains",
       title: feature.properties?.station_name ?? "",
+      data: {
+        color: "teal",
+      },
     });
     return annotation;
   });

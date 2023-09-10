@@ -4,6 +4,9 @@ import Box from "../box";
 import { useDrag } from "react-use-gesture";
 
 import { StyledListItem } from "./styled";
+import Icon from "../icons";
+import theme from "../../utils/theme";
+import { SystemColors } from "../../utils/theme/darkPalette";
 
 const DRAG_THRESHOLD = 5;
 
@@ -16,6 +19,8 @@ type ListItemProps = ListChildComponentProps<ItemData>;
 
 const ListItem = ({ index, style, data }: ListItemProps) => {
   const item = data.items[index];
+  const itemColor: keyof SystemColors = item.data.color;
+  const backgroundColor = theme.dark.palette.system[itemColor].main;
   if (!item) return null;
 
   const bind = useDrag(({ down, distance }) => {
@@ -27,7 +32,7 @@ const ListItem = ({ index, style, data }: ListItemProps) => {
   return (
     <StyledListItem style={style} {...bind()}>
       <Box height="50px" width="50px" marginRight="md">
-        <LockCircleIcon />
+        <Icon code={item.clusteringIdentifier} backgroundColor={backgroundColor} />
       </Box>
       <div>{item.title}</div>
     </StyledListItem>
