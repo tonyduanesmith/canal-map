@@ -3,7 +3,7 @@ import WindingCircleIcon from "./winding-circle";
 import TrainCircleIcon from "./train-circle";
 
 type IconProps = {
-  code: "lock" | "winding" | "train";
+  code: "lock" | "winding" | "trains";
   color?: string;
   backgroundColor?: string;
 };
@@ -11,7 +11,7 @@ type IconProps = {
 const iconsMap = {
   lock: LockCircleIcon,
   winding: WindingCircleIcon,
-  train: TrainCircleIcon,
+  trains: TrainCircleIcon,
 };
 
 const Icon: React.FC<IconProps> = ({ code, ...rest }) => {

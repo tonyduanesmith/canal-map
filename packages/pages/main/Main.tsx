@@ -60,9 +60,13 @@ const Main = () => {
     return getGeoJsonToTrainsAnnotations(trainsGeoJSON as GeoJSON.FeatureCollection);
   }, [trainsGeoJSON, isLoaded]);
 
-  const combinedAnnotations = useMemo(() => {
+  const combinedMapAnnotations = useMemo(() => {
     return [...locksAnnotations, ...windingAnnotations];
   }, [locksAnnotations, windingAnnotations]);
+
+  const combinedSearchAnnotations = useMemo(() => {
+    return [...locksAnnotations, ...windingAnnotations, ...trainsAnnotations];
+  }, [locksAnnotations, windingAnnotations, trainsAnnotations]);
 
   const canalOverlay = useMemo(() => {
     if (!isLoaded || !canalOverlayStyle) return [];
@@ -70,9 +74,9 @@ const Main = () => {
   }, [canalGeoJSON, canalOverlayStyle, isLoaded]);
 
   const getFilteredAnnotations = useMemo(() => {
-    if (!searchValue) return combinedAnnotations;
+    if (!searchValue) return combinedSearchAnnotations;
     return filteredAnnotations;
-  }, [filteredAnnotations, combinedAnnotations, searchValue]);
+  }, [filteredAnnotations, combinedSearchAnnotations, searchValue]);
 
   const handleOnSearchCancel = () => {
     setSnapPoint({ snapPoint: 50, forceUpdate: true });
@@ -83,7 +87,7 @@ const Main = () => {
   };
 
   const handleOnSearchChange = async (value: string) => {
-    const filteredAnnotations = combinedAnnotations?.filter(annotation =>
+    const filteredAnnotations = combinedSearchAnnotations?.filter(annotation =>
       annotation.title.toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredAnnotations(filteredAnnotations ?? []);
@@ -142,7 +146,7 @@ const Main = () => {
         id="canal-map"
         token={import.meta.env.VITE_TOKEN}
         showsUserLocation
-        annotations={combinedAnnotations}
+        annotations={combinedMapAnnotations}
         overlays={canalOverlay}
         centerCoords={selectedCoords}
       />
