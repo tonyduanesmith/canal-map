@@ -43,6 +43,25 @@ export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) 
   });
 };
 
+export const getGeoJsonToTrainsAnnotations = (data: GeoJSON.FeatureCollection) => {
+  return data.features.map(feature => {
+    const geometry = feature.geometry as GeoJSON.Point;
+    const [longitude, latitude] = geometry.coordinates;
+    const coords = new mapkit.Coordinate(latitude, longitude);
+    const annotation = new mapkit.ImageAnnotation(coords, {
+      url: { 1: windingImage },
+      size: {
+        width: 20,
+        height: 20,
+      },
+      anchorOffset: new DOMPoint(0, -10),
+      clusteringIdentifier: "trains",
+      title: feature.properties?.station_name ?? "",
+    });
+    return annotation;
+  });
+};
+
 export const getGeoJsonToOverlays = (data: GeoJSON.FeatureCollection, style: mapkit.Style) => {
   const overlays: Array<mapkit.PolylineOverlay> = [];
   data.features.forEach(feature => {

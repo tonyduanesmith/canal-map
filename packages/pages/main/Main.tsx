@@ -6,10 +6,12 @@ import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
+import trainsGeoJSON from "../../app/canalMap/public/assets/trains.json";
 import {
   getClosestLocation,
   getGeoJsonLockToAnnotations,
   getGeoJsonToOverlays,
+  getGeoJsonToTrainsAnnotations,
   getGeoJsonWindingToAnnotations,
 } from "./utils";
 import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks";
@@ -53,6 +55,11 @@ const Main = () => {
     return getGeoJsonWindingToAnnotations(windingGeoJSON as GeoJSON.FeatureCollection) ?? [];
   }, [windingGeoJSON, isLoaded]);
 
+  const trainsAnnotations = useMemo(() => {
+    if (!isLoaded) return [];
+    return getGeoJsonToTrainsAnnotations(trainsGeoJSON as GeoJSON.FeatureCollection);
+  }, [trainsGeoJSON, isLoaded]);
+
   const combinedAnnotations = useMemo(() => {
     return [...locksAnnotations, ...windingAnnotations];
   }, [locksAnnotations, windingAnnotations]);
@@ -85,6 +92,7 @@ const Main = () => {
 
   const closestLock = getClosestLocation(currentLocation, locksAnnotations ?? []);
   const closestWinding = getClosestLocation(currentLocation, windingAnnotations ?? []);
+  const closestTrains = getClosestLocation(currentLocation, trainsAnnotations ?? []);
 
   if (!isLoaded) return null;
 
@@ -167,7 +175,12 @@ const Main = () => {
           />
         )}
         {snapPoint.snapPoint !== 7 && (
-          <ClosestSection closestLock={closestLock} onClick={handleOnListItemClick} closestWinding={closestWinding} />
+          <ClosestSection
+            closestLock={closestLock}
+            onClick={handleOnListItemClick}
+            closestWinding={closestWinding}
+            closestTrains={closestTrains}
+          />
         )}
       </BottomSheet>
     </Box>

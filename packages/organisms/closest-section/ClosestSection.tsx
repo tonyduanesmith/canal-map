@@ -7,38 +7,37 @@ import Typography from "../../atoms/typography";
 import { ClosestLocation } from "../../pages/main/utils";
 import { milesToMinutes, removeLockPattern } from "./utils";
 import theme from "../../utils/theme";
+import TrainCircleIcon from "../../atoms/icons/train-circle";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
   closestWinding: ClosestLocation | null;
+  closestTrains: ClosestLocation | null;
   onClick: (item: any) => void;
 }
 
-const ClosestSection = ({ closestLock, onClick, closestWinding }: ClosestSectionProps) => {
+const ClosestSection = ({ closestLock, onClick, closestWinding, closestTrains }: ClosestSectionProps) => {
   const lockName = removeLockPattern(closestLock?.location?.title ?? "");
   const lockDistanceMiles = parseFloat((closestLock?.distance ?? 0).toFixed(1));
   const lockDistanceMinutes = milesToMinutes(lockDistanceMiles);
   const windingName = closestWinding?.location?.title ?? "";
   const windingDistanceMiles = parseFloat((closestWinding?.distance ?? 0).toFixed(1));
   const windingDistanceMinutes = milesToMinutes(windingDistanceMiles);
+  const trainName = closestTrains?.location?.title ?? "";
+  const trainDistanceMiles = parseFloat((closestTrains?.distance ?? 0).toFixed(1));
+  const trainDistanceMinutes = milesToMinutes(trainDistanceMiles);
   return (
     <Box marginTop="md">
       <Typography variant="h4">Nearest</Typography>
-      <Card padding="md" display="flex">
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          onClick={() => onClick(closestLock?.location)}
-          marginRight="md"
-        >
+      <Card padding="md" display="flex" justifyContent="space-between">
+        <Box display="flex" flexDirection="column" alignItems="center" onClick={() => onClick(closestLock?.location)}>
           <Box height="50px" width="50px">
             <LockCircleIcon />
           </Box>
           <Typography width="96px" textOverflow>
             {lockName}
           </Typography>
-          <Typography bold>{`${lockDistanceMiles} mi/${lockDistanceMinutes} mins`}</Typography>
+          <Typography bold>{`${lockDistanceMiles} mi/${lockDistanceMinutes}m`}</Typography>
         </Box>
         <Box
           display="flex"
@@ -47,12 +46,21 @@ const ClosestSection = ({ closestLock, onClick, closestWinding }: ClosestSection
           onClick={() => onClick(closestWinding?.location)}
         >
           <Box height="50px" width="50px">
-            <WindingCircleIcon backgroundColor={theme.dark.palette.system.blue.main} />
+            <WindingCircleIcon backgroundColor={theme.dark.palette.system.orange.main} />
           </Box>
           <Typography width="96px" textOverflow>
             {windingName}
           </Typography>
-          <Typography bold>{`${windingDistanceMiles} mi/${windingDistanceMinutes} mins`}</Typography>
+          <Typography bold>{`${windingDistanceMiles} mi/${windingDistanceMinutes} m`}</Typography>
+        </Box>
+        <Box display="flex" flexDirection="column" alignItems="center" onClick={() => onClick(closestTrains?.location)}>
+          <Box height="50px" width="50px">
+            <TrainCircleIcon backgroundColor={theme.dark.palette.system.teal.main} />
+          </Box>
+          <Typography width="96px" textOverflow>
+            {trainName}
+          </Typography>
+          <Typography bold>{`${trainDistanceMiles} mi/${trainDistanceMinutes} m`}</Typography>
         </Box>
       </Card>
     </Box>
