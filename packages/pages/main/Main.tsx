@@ -22,8 +22,10 @@ import { StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
 import SearchList from "../../organisms/search-list";
 import ClosestSection from "../../organisms/closest-section";
+import { useMediaQuery } from "react-responsive";
 
 const Main = () => {
+  const isMobile = useMediaQuery({ maxWidth: 760 });
   const [firstScroll, setFirstScroll] = useState(true);
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
   const [searchValue, setSearchValue] = useState("");
@@ -153,41 +155,72 @@ const Main = () => {
       {/* <StyledLocationWrapper>
         <LocationButton onClick={handleOnLocationClick} />
       </StyledLocationWrapper> */}
-
-      <BottomSheet
-        snapPoints={[7, 50, 70]}
-        setSnapPoint={snapPoint}
-        onSnapPointChange={handleSnapPointChange}
-        disableGesture={disableGesture}
-      >
-        <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-          <Search
-            onSearchFocus={handleOnSearchFocus}
-            value={searchValue}
-            onChange={handleOnSearchChange}
-            marginRight="md"
-          />
-          <Button onClick={handleOnSearchCancel}>Cancel</Button>
+      {isMobile ? (
+        <BottomSheet
+          snapPoints={[7, 50, 70]}
+          setSnapPoint={snapPoint}
+          onSnapPointChange={handleSnapPointChange}
+          disableGesture={disableGesture}
+        >
+          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+            <Search
+              onSearchFocus={handleOnSearchFocus}
+              value={searchValue}
+              onChange={handleOnSearchChange}
+              marginRight="md"
+            />
+            <Button onClick={handleOnSearchCancel}>Cancel</Button>
+          </Box>
+          {snapPoint.snapPoint === 7 && (
+            <SearchList
+              isScrollable={isScrollable}
+              onScroll={handleOnScroll}
+              itemCount={getFilteredAnnotations?.length ?? 0}
+              items={getFilteredAnnotations ?? []}
+              onClick={handleOnListItemClick}
+              currentLocation={currentLocation}
+            />
+          )}
+          {snapPoint.snapPoint !== 7 && (
+            <ClosestSection
+              closestLock={closestLock}
+              onClick={handleOnListItemClick}
+              closestWinding={closestWinding}
+              closestTrains={closestTrains}
+            />
+          )}
+        </BottomSheet>
+      ) : (
+        <Box width={300} height="100%" position="absolute" top={0} left={0} bgColor="grey" padding="md">
+          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+            <Search
+              onSearchFocus={handleOnSearchFocus}
+              value={searchValue}
+              onChange={handleOnSearchChange}
+              marginRight="md"
+            />
+            <Button onClick={handleOnSearchCancel}>Cancel</Button>
+          </Box>
+          {searchValue && (
+            <SearchList
+              isScrollable={isScrollable}
+              onScroll={handleOnScroll}
+              itemCount={getFilteredAnnotations?.length ?? 0}
+              items={getFilteredAnnotations ?? []}
+              onClick={handleOnListItemClick}
+              currentLocation={currentLocation}
+            />
+          )}
+          {!searchValue && (
+            <ClosestSection
+              closestLock={closestLock}
+              onClick={handleOnListItemClick}
+              closestWinding={closestWinding}
+              closestTrains={closestTrains}
+            />
+          )}
         </Box>
-        {snapPoint.snapPoint === 7 && (
-          <SearchList
-            isScrollable={isScrollable}
-            onScroll={handleOnScroll}
-            itemCount={getFilteredAnnotations?.length ?? 0}
-            items={getFilteredAnnotations ?? []}
-            onClick={handleOnListItemClick}
-            currentLocation={currentLocation}
-          />
-        )}
-        {snapPoint.snapPoint !== 7 && (
-          <ClosestSection
-            closestLock={closestLock}
-            onClick={handleOnListItemClick}
-            closestWinding={closestWinding}
-            closestTrains={closestTrains}
-          />
-        )}
-      </BottomSheet>
+      )}
     </Box>
   );
 };

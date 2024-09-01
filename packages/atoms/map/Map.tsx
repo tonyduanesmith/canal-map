@@ -17,20 +17,82 @@ interface Props {
 const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
   const mapRef = useRef<mapkit.Map>();
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
-  const zoomThreshold = new mapkit.CoordinateSpan(0.5, 0.5);
+  const renderQueue = useRef<mapkit.ImageAnnotation[]>([]);
+  const isRendering = useRef(false);
+  const visibleAnnotations = useRef(new Set<mapkit.ImageAnnotation>());
 
-  const handleZoomChange = () => {
-    const currentSpan = mapRef.current?.region.span;
+  const isAnnotationInView = (annotation: mapkit.ImageAnnotation, region: mapkit.CoordinateRegion) => {
+    const { latitude, longitude } = annotation.coordinate;
+    const north = region.center.latitude + region.span.latitudeDelta / 2;
+    const south = region.center.latitude - region.span.latitudeDelta / 2;
+    const east = region.center.longitude + region.span.longitudeDelta / 2;
+    const west = region.center.longitude - region.span.longitudeDelta / 2;
 
-    if ((currentSpan?.latitudeDelta ?? 0) < zoomThreshold.latitudeDelta && 
-        (currentSpan?.longitudeDelta ?? 0) < zoomThreshold.longitudeDelta) {
-        // Show annotations
-        mapRef.current?.addAnnotations(annotations);
+    return latitude >= south && latitude <= north && longitude >= west && longitude <= east;
+  };
+
+  const throttle = <T extends any[]>(func: (...args: T) => void, delay: number) => {
+    let timeout: NodeJS.Timeout | null = null;
+    return function (...args: T) {
+      if (!timeout) {
+        timeout = setTimeout(() => {
+          func(...args);
+          timeout = null;
+        }, delay);
+      }
+    };
+  };
+
+  const renderAnnotations = () => {
+    if (isRendering.current) return;
+
+    isRendering.current = true;
+    requestAnimationFrame(() => {
+      const annotationsToRender = renderQueue.current.slice(0, 20); // Render 10 annotations at a time
+      renderQueue.current = renderQueue.current.slice(20);
+
+      annotationsToRender.forEach(annotation => {
+        if (!visibleAnnotations.current.has(annotation)) {
+          mapRef.current?.addAnnotation(annotation);
+          visibleAnnotations.current.add(annotation);
+        }
+      });
+
+      isRendering.current = false;
+
+      if (renderQueue.current.length > 0) {
+        renderAnnotations();
+      }
+    });
+  };
+
+  const handleZoomChange = throttle(() => {
+    const currentRegion = mapRef.current?.region;
+
+    if (currentRegion && currentRegion.span.latitudeDelta < 0.5) {
+      // Determine which annotations should be visible
+      const newVisibleAnnotations = annotations.filter(annotation => isAnnotationInView(annotation, currentRegion));
+
+      // Add new annotations that are now in view
+      const newAnnotations = newVisibleAnnotations.filter(annotation => !visibleAnnotations.current.has(annotation));
+      renderQueue.current.push(...newAnnotations);
+
+      // Remove annotations that are no longer in view
+      visibleAnnotations.current.forEach(annotation => {
+        if (!isAnnotationInView(annotation, currentRegion)) {
+          mapRef.current?.removeAnnotation(annotation);
+          visibleAnnotations.current.delete(annotation);
+        }
+      });
+
+      renderAnnotations();
     } else {
-        // Hide annotations
-        mapRef.current?.removeAnnotations(annotations);
+      visibleAnnotations.current.forEach(annotation => {
+        mapRef.current?.removeAnnotation(annotation);
+      });
+      visibleAnnotations.current.clear();
     }
-  }
+  }, 100);
 
   useEffect(() => {
     if (isLoaded) {
@@ -59,7 +121,7 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
                   height: 20,
                 },
                 anchorOffset: new DOMPoint(0, -10),
-                animates: false,
+                animates: false, // Disable animation for cluster annotations
               });
             }
             if (clusterAnnotation.clusteringIdentifier === "winding") {
@@ -72,17 +134,17 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
                   height: 20,
                 },
                 anchorOffset: new DOMPoint(0, -10),
-                animates: false,
+                animates: false, // Disable animation for cluster annotations
               });
             }
           };
 
           mapRef.current.region = currentRegion;
           mapRef.current.showsUserLocation = showsUserLocation;
-          mapRef.current?.addAnnotations(annotations);
+          handleZoomChange(); // Initialize with the correct annotations in view
           mapRef.current.addOverlays(overlays);
 
-          mapRef.current.addEventListener('region-change-end', handleZoomChange);
+          mapRef.current.addEventListener("region-change-end", handleZoomChange);
         }
       };
 

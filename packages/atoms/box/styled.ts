@@ -4,6 +4,10 @@ import styled from "styled-components";
 import spacing, { Spacing } from "../../utils/theme/spacing";
 
 export interface BoxProps {
+  top?: CSSProperties["top"];
+  left?: CSSProperties["left"];
+  right?: CSSProperties["right"];
+  bottom?: CSSProperties["bottom"];
   position?: CSSProperties["position"];
   display?: CSSProperties["display"];
   flex?: CSSProperties["flex"];
@@ -39,13 +43,17 @@ export const StyledBox = styled.div<BoxProps>`
   height: ${props => props.height || "auto"};
   background-color: ${props => props.bgColor || "transparent"};
   padding: ${props => spacing[props.padding || "none"]};
-  padding-left: ${props => props.paddingLeft !== undefined ? spacing[props.paddingLeft] : undefined};
-  padding-right: ${props => props.paddingRight !== undefined ? spacing[props.paddingRight] : undefined};
-  padding-top: ${props => props.paddingTop !== undefined ? spacing[props.paddingTop] : undefined};
-  padding-bottom: ${props => props.paddingBottom !== undefined ? spacing[props.paddingBottom] : undefined};
+  padding-left: ${props => (props.paddingLeft !== undefined ? spacing[props.paddingLeft] : undefined)};
+  padding-right: ${props => (props.paddingRight !== undefined ? spacing[props.paddingRight] : undefined)};
+  padding-top: ${props => (props.paddingTop !== undefined ? spacing[props.paddingTop] : undefined)};
+  padding-bottom: ${props => (props.paddingBottom !== undefined ? spacing[props.paddingBottom] : undefined)};
   margin: ${props => spacing[props.margin || "none"]};
-  margin-left: ${props => props.marginLeft !== undefined ? spacing[props.marginLeft] : undefined};
-  margin-right: ${props => props.marginRight !== undefined ? spacing[props.marginRight] : undefined};
-  margin-top: ${props => props.marginTop !== undefined ? spacing[props.marginTop] : undefined};
-  margin-bottom: ${props => props.marginBottom !== undefined ? spacing[props.marginBottom] : undefined};
+  margin-left: ${props => (props.marginLeft !== undefined ? spacing[props.marginLeft] : undefined)};
+  margin-right: ${props => (props.marginRight !== undefined ? spacing[props.marginRight] : undefined)};
+  margin-top: ${props => (props.marginTop !== undefined ? spacing[props.marginTop] : undefined)};
+  margin-bottom: ${props => (props.marginBottom !== undefined ? spacing[props.marginBottom] : undefined)};
+  top: ${props => (props.top !== undefined ? props.top : undefined)};
+  left: ${props => (props.left !== undefined ? props.left : undefined)};
+  right: ${props => (props.right !== undefined ? props.right : undefined)};
+  bottom: ${props => (props.bottom !== undefined ? props.bottom : undefined)};
 `;
