@@ -18,7 +18,7 @@ import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
-import { StyledLocationWrapper } from "./styled";
+import { StyledContainer, StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
 import SearchList from "../../organisms/search-list";
 import ClosestSection from "../../organisms/closest-section";
@@ -191,7 +191,7 @@ const Main = () => {
           )}
         </BottomSheet>
       ) : (
-        <Box width={300} height="100%" position="absolute" top={0} left={0} bgColor="grey" padding="md">
+        <StyledContainer>
           <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
             <Search
               onSearchFocus={handleOnSearchFocus}
@@ -219,7 +219,7 @@ const Main = () => {
               closestTrains={closestTrains}
             />
           )}
-        </Box>
+        </StyledContainer>
       )}
     </Box>
   );
