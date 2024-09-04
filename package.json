@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/apple-mapkit-js-browser": "^5.65.3",
+    "@types/apple-mapkit-js-browser": "^5.78.0",
     "@types/geojson": "^7946.0.10",
     "dotenv": "^16.3.1",
     "polished": "^4.2.2",

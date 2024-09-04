@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
+import { useMediaQuery } from "react-responsive";
 
 import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
@@ -8,6 +9,7 @@ import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
 import trainsGeoJSON from "../../app/canalMap/public/assets/trains.json";
 import {
+  Coordinate,
   getClosestLocation,
   getGeoJsonLockToAnnotations,
   getGeoJsonToOverlays,
@@ -22,14 +24,27 @@ import { StyledContainer, StyledLocationWrapper } from "./styled";
 import { getGeoLocationWithCache } from "../../atoms/map/utils";
 import SearchList from "../../organisms/search-list";
 import ClosestSection from "../../organisms/closest-section";
-import { useMediaQuery } from "react-responsive";
+import SelectedAnnotation from "../../organisms/selected-annotation";
+import RouteSelector from "../../organisms/route-selector";
 
 const Main = () => {
+  const [startAnnotation, setStartAnnotation] = useState<mapkit.Annotation | null>(null);
+  const [endAnnotation, setEndAnnotation] = useState<mapkit.Annotation | null>(null);
+  const [startSearchValue, setStartSearchValue] = useState("");
+  const [endSearchValue, setEndSearchValue] = useState("");
+  const [startCoords, setStartCoords] = useState<Coordinate | null>(null);
+  const [endCoords, setEndCoords] = useState<Coordinate | null>(null);
+  const [isStartSearchFocused, setIsStartSearchFocused] = useState(false);
+  const [isEndSearchFocused, setIsEndSearchFocused] = useState(false);
+
   const isMobile = useMediaQuery({ maxWidth: 760 });
   const [firstScroll, setFirstScroll] = useState(true);
+  const [selectedAnnotation, setSelectedAnnotation] = useState<mapkit.Annotation | null>(null);
   const [selectedCoords, setSelectedCoords] = useState<mapkit.Coordinate | null>(null);
   const [searchValue, setSearchValue] = useState("");
-  const [filteredAnnotations, setFilteredAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
+  const [filteredSearchAnnotations, setFilteredSearchAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
+  const [filteredStartSearchAnnotations, setFilteredStartSearchAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
+  const [filteredEndSearchAnnotations, setFilteredEndSearchAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
   const [snapPoint, setSnapPoint] = useState({ snapPoint: 50, forceUpdate: false });
   const [disableGesture, setDisableGesture] = useState(false);
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
@@ -75,25 +90,54 @@ const Main = () => {
     return getGeoJsonToOverlays(canalGeoJSON as GeoJSON.FeatureCollection, canalOverlayStyle);
   }, [canalGeoJSON, canalOverlayStyle, isLoaded]);
 
-  const getFilteredAnnotations = useMemo(() => {
+  const getFilteredSearchAnnotations = useMemo(() => {
     if (!searchValue) return combinedSearchAnnotations;
-    return filteredAnnotations;
-  }, [filteredAnnotations, combinedSearchAnnotations, searchValue]);
+    return filteredSearchAnnotations;
+  }, [filteredSearchAnnotations, combinedSearchAnnotations, searchValue]);
+
+  const getFilteredStartAnnotations = useMemo(() => {
+    if (!startSearchValue) return combinedSearchAnnotations;
+    return filteredStartSearchAnnotations;
+  }, [filteredStartSearchAnnotations, combinedSearchAnnotations, startSearchValue]);
+
+  const getFilteredEndAnnotations = useMemo(() => {
+    if (!endSearchValue) return combinedSearchAnnotations;
+    return filteredEndSearchAnnotations;
+  }, [filteredEndSearchAnnotations, combinedSearchAnnotations, endSearchValue]);
 
   const handleOnSearchCancel = () => {
     setSnapPoint({ snapPoint: 50, forceUpdate: true });
     setDisableGesture(false);
+    setSearchValue("");
+    setSelectedAnnotation(null);
   };
   const handleOnSearchFocus = () => {
     setSnapPoint({ snapPoint: 7, forceUpdate: true });
+    setSelectedAnnotation(null);
   };
 
   const handleOnSearchChange = async (value: string) => {
-    const filteredAnnotations = combinedSearchAnnotations?.filter(annotation =>
+    const filteredSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
       annotation.title.toLowerCase().includes(value.toLowerCase()),
     );
-    setFilteredAnnotations(filteredAnnotations ?? []);
+    setFilteredSearchAnnotations(filteredSearchAnnotations ?? []);
     setSearchValue(value);
+  };
+
+  const handleOnStartAnnotationChange = async (value: string) => {
+    const filteredStartSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
+      annotation.title.toLowerCase().includes(value.toLowerCase()),
+    );
+    setFilteredStartSearchAnnotations(filteredStartSearchAnnotations ?? []);
+    setStartSearchValue(value);
+  };
+
+  const handleOnEndAnnotationChange = async (value: string) => {
+    const filteredEndSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
+      annotation.title.toLowerCase().includes(value.toLowerCase()),
+    );
+    setFilteredEndSearchAnnotations(filteredEndSearchAnnotations ?? []);
+    setEndSearchValue(value);
   };
 
   const closestLock = getClosestLocation(currentLocation, locksAnnotations ?? []);
@@ -106,9 +150,33 @@ const Main = () => {
     setTimeout(() => {
       setSnapPoint({ snapPoint: 70, forceUpdate: true });
     }, 16);
-    console.log(annotation.coordinate);
     setSelectedCoords(annotation.coordinate);
+    setSelectedAnnotation(annotation);
     setDisableGesture(false);
+  };
+
+  const handleStartAnnotationItemClick = (annotation: mapkit.ImageAnnotation) => {
+    setTimeout(() => {
+      setSnapPoint({ snapPoint: 70, forceUpdate: true });
+    }, 16);
+    setIsStartSearchFocused(false);
+    setSelectedCoords(annotation.coordinate);
+    setStartAnnotation(annotation);
+    setStartSearchValue(annotation.title);
+    setDisableGesture(false);
+    setStartCoords([annotation.coordinate.latitude, annotation.coordinate.longitude]);
+  };
+
+  const handleEndAnnotationItemClick = (annotation: mapkit.ImageAnnotation) => {
+    setTimeout(() => {
+      setSnapPoint({ snapPoint: 70, forceUpdate: true });
+    }, 16);
+    setIsEndSearchFocused(false);
+    setSelectedCoords(annotation.coordinate);
+    setEndAnnotation(annotation);
+    setEndSearchValue(annotation.title);
+    setDisableGesture(false);
+    setEndCoords([annotation.coordinate.latitude, annotation.coordinate.longitude]);
   };
 
   const handleOnLocationClick = async () => {
@@ -142,6 +210,47 @@ const Main = () => {
     }
   };
 
+  const handleSetStartAnnotation = () => {
+    if (selectedAnnotation) {
+      setStartAnnotation(selectedAnnotation);
+      setStartSearchValue(selectedAnnotation?.title ?? "");
+      setStartCoords([selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]);
+    }
+  };
+
+  const handleSetEndAnnotation = () => {
+    if (selectedAnnotation) {
+      setEndAnnotation(selectedAnnotation);
+      setEndSearchValue(selectedAnnotation?.title ?? "");
+      setEndCoords([selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]);
+    }
+  };
+
+  const handleCancelRoute = () => {
+    setEndAnnotation(null);
+    setStartAnnotation(null);
+    setStartSearchValue("");
+    setEndSearchValue("");
+    setStartCoords(null);
+    setEndCoords(null);
+    setSelectedAnnotation(null);
+    setSearchValue("");
+  };
+
+  const handleEndSearchFocus = () => {
+    setIsEndSearchFocused(true);
+    setIsStartSearchFocused(false);
+  };
+
+  const handleStartSearchFocus = () => {
+    setIsStartSearchFocused(true);
+    setIsEndSearchFocused(false);
+  };
+
+  const handleSetSelectedAnnotation = () => {
+    setSelectedAnnotation(null);
+  };
+
   return (
     <Box width="100%" height="100%" position="relative">
       <Map
@@ -151,6 +260,8 @@ const Main = () => {
         annotations={combinedMapAnnotations}
         overlays={canalOverlay}
         centerCoords={selectedCoords}
+        startCoords={startCoords}
+        endCoords={endCoords}
       />
       {/* <StyledLocationWrapper>
         <LocationButton onClick={handleOnLocationClick} />
@@ -162,6 +273,14 @@ const Main = () => {
           onSnapPointChange={handleSnapPointChange}
           disableGesture={disableGesture}
         >
+          {selectedAnnotation && (
+            <SelectedAnnotation
+              title={selectedAnnotation?.title}
+              coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
+              onSetEndAnnotation={handleSetEndAnnotation}
+              onSetStartAnnotation={handleSetStartAnnotation}
+            />
+          )}
           <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
             <Search
               onSearchFocus={handleOnSearchFocus}
@@ -171,17 +290,17 @@ const Main = () => {
             />
             <Button onClick={handleOnSearchCancel}>Cancel</Button>
           </Box>
-          {snapPoint.snapPoint === 7 && (
+          {snapPoint.snapPoint === 7 && !selectedAnnotation && (
             <SearchList
               isScrollable={isScrollable}
               onScroll={handleOnScroll}
-              itemCount={getFilteredAnnotations?.length ?? 0}
-              items={getFilteredAnnotations ?? []}
+              itemCount={getFilteredSearchAnnotations?.length ?? 0}
+              items={getFilteredSearchAnnotations ?? []}
               onClick={handleOnListItemClick}
               currentLocation={currentLocation}
             />
           )}
-          {snapPoint.snapPoint !== 7 && (
+          {snapPoint.snapPoint !== 7 && !selectedAnnotation && (
             <ClosestSection
               closestLock={closestLock}
               onClick={handleOnListItemClick}
@@ -192,32 +311,80 @@ const Main = () => {
         </BottomSheet>
       ) : (
         <StyledContainer>
-          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-            <Search
-              onSearchFocus={handleOnSearchFocus}
-              value={searchValue}
-              onChange={handleOnSearchChange}
-              marginRight="md"
-            />
-            <Button onClick={handleOnSearchCancel}>Cancel</Button>
-          </Box>
-          {searchValue && (
-            <SearchList
-              isScrollable={isScrollable}
-              onScroll={handleOnScroll}
-              itemCount={getFilteredAnnotations?.length ?? 0}
-              items={getFilteredAnnotations ?? []}
-              onClick={handleOnListItemClick}
-              currentLocation={currentLocation}
-            />
-          )}
-          {!searchValue && (
-            <ClosestSection
-              closestLock={closestLock}
-              onClick={handleOnListItemClick}
-              closestWinding={closestWinding}
-              closestTrains={closestTrains}
-            />
+          {startAnnotation || endAnnotation ? (
+            <>
+              <RouteSelector
+                startSearchValue={startSearchValue}
+                endSearchValue={endSearchValue}
+                onStartSearchValueChange={handleOnStartAnnotationChange}
+                onEndSearchValueChange={handleOnEndAnnotationChange}
+                onCancelRoute={handleCancelRoute}
+                onStartSearchFocus={handleStartSearchFocus}
+                onEndSearchFocus={handleEndSearchFocus}
+              />
+              {isStartSearchFocused && (
+                <SearchList
+                  isScrollable
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredStartAnnotations?.length ?? 0}
+                  items={getFilteredStartAnnotations ?? []}
+                  onClick={handleStartAnnotationItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+              {isEndSearchFocused && (
+                <SearchList
+                  isScrollable
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredEndAnnotations?.length ?? 0}
+                  items={getFilteredEndAnnotations ?? []}
+                  onClick={handleEndAnnotationItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {selectedAnnotation ? (
+                <Box>
+                  <Button onClick={handleSetSelectedAnnotation}>Cancel</Button>
+                  <SelectedAnnotation
+                    title={selectedAnnotation?.title}
+                    coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
+                    onSetEndAnnotation={handleSetEndAnnotation}
+                    onSetStartAnnotation={handleSetStartAnnotation}
+                  />
+                </Box>
+              ) : (
+                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+                  <Search
+                    onSearchFocus={handleOnSearchFocus}
+                    value={searchValue}
+                    onChange={handleOnSearchChange}
+                    marginRight="md"
+                  />
+                  <Button onClick={handleOnSearchCancel}>Cancel</Button>
+                </Box>
+              )}
+              {searchValue && !selectedAnnotation && (
+                <SearchList
+                  isScrollable={isScrollable}
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredSearchAnnotations?.length ?? 0}
+                  items={getFilteredSearchAnnotations ?? []}
+                  onClick={handleOnListItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+              {!searchValue && !selectedAnnotation && (
+                <ClosestSection
+                  closestLock={closestLock}
+                  onClick={handleOnListItemClick}
+                  closestWinding={closestWinding}
+                  closestTrains={closestTrains}
+                />
+              )}
+            </>
           )}
         </StyledContainer>
       )}

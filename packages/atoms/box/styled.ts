@@ -17,6 +17,7 @@ export interface BoxProps {
   width?: CSSProperties["width"];
   height?: CSSProperties["height"];
   bgColor?: CSSProperties["backgroundColor"];
+  color?: CSSProperties["color"];
   padding?: Spacing;
   paddingTop?: Spacing;
   paddingBottom?: Spacing;
@@ -29,6 +30,7 @@ export interface BoxProps {
   marginLeft?: Spacing;
   children?: ReactNode;
   style?: CSSProperties;
+  gap?: Spacing;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
@@ -42,6 +44,7 @@ export const StyledBox = styled.div<BoxProps>`
   width: ${props => props.width || "auto"};
   height: ${props => props.height || "auto"};
   background-color: ${props => props.bgColor || "transparent"};
+  color: ${props => props.color};
   padding: ${props => spacing[props.padding || "none"]};
   padding-left: ${props => (props.paddingLeft !== undefined ? spacing[props.paddingLeft] : undefined)};
   padding-right: ${props => (props.paddingRight !== undefined ? spacing[props.paddingRight] : undefined)};
@@ -56,4 +59,5 @@ export const StyledBox = styled.div<BoxProps>`
   left: ${props => (props.left !== undefined ? props.left : undefined)};
   right: ${props => (props.right !== undefined ? props.right : undefined)};
   bottom: ${props => (props.bottom !== undefined ? props.bottom : undefined)};
+  gap: ${props => (props.gap !== undefined ? spacing[props.gap] : undefined)};
 `;

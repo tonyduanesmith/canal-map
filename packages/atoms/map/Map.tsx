@@ -4,6 +4,7 @@ import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
 import windingImage from "../icons/winding/winding.svg";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
+import { Coordinate, dijkstra, getCoordinatesToOverlay } from "../../pages/main/utils";
 
 interface Props {
   token: string;
@@ -12,9 +13,21 @@ interface Props {
   annotations: Array<mapkit.ImageAnnotation>;
   overlays: Array<mapkit.PolylineOverlay>;
   centerCoords: mapkit.Coordinate | null;
+  startCoords: Coordinate | null;
+  endCoords: Coordinate | null;
 }
 
-const Map = ({ token, id, showsUserLocation = false, annotations, overlays, centerCoords }: Props) => {
+const Map = ({
+  token,
+  id,
+  showsUserLocation = false,
+  annotations,
+  overlays,
+  centerCoords,
+  startCoords,
+  endCoords,
+}: Props) => {
+  const pathOverlayRef = useRef<mapkit.PolylineOverlay>();
   const mapRef = useRef<mapkit.Map>();
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const renderQueue = useRef<mapkit.ImageAnnotation[]>([]);
@@ -145,6 +158,8 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
           mapRef.current.addOverlays(overlays);
 
           mapRef.current.addEventListener("region-change-end", handleZoomChange);
+          // @ts-ignore
+          mapRef.current._allowWheelToZoom = true;
         }
       };
 
@@ -161,6 +176,48 @@ const Map = ({ token, id, showsUserLocation = false, annotations, overlays, cent
       mapRef.current.region = newRegion;
     }
   }, [centerCoords]);
+
+  useEffect(() => {
+    if (startCoords && endCoords && mapRef.current) {
+      const startCoordsOrdered: Coordinate = [startCoords[1], startCoords[0]];
+      const endCoordsOrdered: Coordinate = [endCoords[1], endCoords[0]];
+
+      const path = dijkstra(startCoordsOrdered, endCoordsOrdered);
+
+      const pathOverlayStyle = new mapkit.Style({
+        lineWidth: 4,
+        lineJoin: "round",
+        strokeColor: "red",
+        strokeOpacity: 0.5,
+      });
+
+      const pathOverlay = getCoordinatesToOverlay(path, pathOverlayStyle);
+
+      if (pathOverlayRef.current) {
+        mapRef.current.removeOverlay(pathOverlayRef.current);
+      }
+
+      mapRef.current.addOverlay(pathOverlay);
+
+      pathOverlayRef.current = pathOverlay;
+
+      // Calculate the region to zoom to
+      const midLat = (startCoords[0] + endCoords[0]) / 2;
+      const midLng = (startCoords[1] + endCoords[1]) / 2;
+      const latSpan = Math.abs(startCoords[0] - endCoords[0]) * 1.5;
+      const lngSpan = Math.abs(startCoords[1] - endCoords[1]) * 1.5;
+
+      const region = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(midLat, midLng),
+        new mapkit.CoordinateSpan(latSpan, lngSpan),
+      );
+
+      // Set the map's region to zoom to the calculated area
+      mapRef.current.setRegionAnimated(region);
+    } else if (!startCoords && !endCoords && pathOverlayRef.current && mapRef.current) {
+      mapRef.current.removeOverlay(pathOverlayRef.current);
+    }
+  }, [startCoords, endCoords]);
 
   return <StyledMapContainer id={id} />;
 };

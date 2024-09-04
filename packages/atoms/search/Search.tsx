@@ -3,7 +3,7 @@ import { BoxProps } from "../box/styled";
 import { StyledSearch, StyledSearchIcon } from "./styled";
 
 interface SearchProps extends BoxProps {
-  onSearchFocus: () => void;
+  onSearchFocus?: () => void;
   onSearchBlur?: () => void;
   placeholder?: string;
   value?: string;

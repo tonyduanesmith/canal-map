@@ -1,37 +1,48 @@
 import { useEffect, useState } from "react";
 
+// A simple flag to ensure MapKit is only initialized once
+let mapKitInitialized = false;
+
 export const useIsMapkitLoaded = ({ token }: { token: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     const setupMapKitJs = async () => {
-      //@ts-ignore
-      if (!window.mapkit || window.mapkit.loadedLibraries.length === 0) {
-        // mapkit.core.js or the libraries are not isLoaded yet.
-        // Set up the callback and wait for it to be called.
-        await new Promise(resolve => {
-          //@ts-ignore
-          window.initMapKit = resolve;
-        });
-
-        // Clean up
-        //@ts-ignore
-        delete window.initMapKit;
+      // Check if MapKit has already been initialized
+      if (window.mapkit && mapKitInitialized) {
+        setIsLoaded(true);
+        return;
       }
 
-      mapkit.init({
-        authorizationCallback: done => {
-          done(token);
-        },
+      console.log("loading mapkit");
+
+      // Wait for the MapKit script to finish loading
+      await new Promise(resolve => {
+        // @ts-ignore
+        window.initMapKit = resolve;
       });
+
+      console.log("loaded mapkit woohoo");
+
+      // Clean up the callback after MapKit is loaded
+      // @ts-ignore
+      delete window.initMapKit;
+
+      // Initialize MapKit if not already initialized
+      if (!mapKitInitialized) {
+        mapkit.init({
+          authorizationCallback: done => {
+            done(token);
+          },
+        });
+        mapKitInitialized = true; // Mark MapKit as initialized
+      }
+
+      setIsLoaded(true); // Mark as loaded
     };
 
-    const main = async () => {
-      await setupMapKitJs();
-      setIsLoaded(true);
-    };
-
-    main();
-  }, [isLoaded]);
+    setupMapKitJs();
+  }, [token]);
 
   return isLoaded;
 };
