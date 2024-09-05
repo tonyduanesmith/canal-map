@@ -15,6 +15,7 @@ interface Props {
   centerCoords: mapkit.Coordinate | null;
   startCoords: Coordinate | null;
   endCoords: Coordinate | null;
+  onSetRouteDistance: (value: number) => void;
 }
 
 const Map = ({
@@ -26,6 +27,7 @@ const Map = ({
   centerCoords,
   startCoords,
   endCoords,
+  onSetRouteDistance,
 }: Props) => {
   const pathOverlayRef = useRef<mapkit.PolylineOverlay>();
   const mapRef = useRef<mapkit.Map>();
@@ -182,7 +184,7 @@ const Map = ({
       const startCoordsOrdered: Coordinate = [startCoords[1], startCoords[0]];
       const endCoordsOrdered: Coordinate = [endCoords[1], endCoords[0]];
 
-      const path = dijkstra(startCoordsOrdered, endCoordsOrdered);
+      const { path, distance } = dijkstra(startCoordsOrdered, endCoordsOrdered);
 
       const pathOverlayStyle = new mapkit.Style({
         lineWidth: 4,
@@ -214,6 +216,7 @@ const Map = ({
 
       // Set the map's region to zoom to the calculated area
       mapRef.current.setRegionAnimated(region);
+      onSetRouteDistance(distance);
     } else if (!startCoords && !endCoords && pathOverlayRef.current && mapRef.current) {
       mapRef.current.removeOverlay(pathOverlayRef.current);
     }

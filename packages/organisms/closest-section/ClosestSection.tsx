@@ -4,9 +4,10 @@ import LockCircleIcon from "../../atoms/icons/lock-circle";
 import WindingCircleIcon from "../../atoms/icons/winding-circle";
 import Typography from "../../atoms/typography";
 import { ClosestLocation } from "../../pages/main/utils";
-import { milesToMinutes, removeLockPattern } from "./utils";
+import { removeLockPattern } from "./utils";
 import theme from "../../utils/theme";
 import TrainCircleIcon from "../../atoms/icons/train-circle";
+import { getMilesToMinutes } from "../../utils/helpers/distanceUtils/";
 
 interface ClosestSectionProps {
   closestLock: ClosestLocation | null;
@@ -18,13 +19,13 @@ interface ClosestSectionProps {
 const ClosestSection = ({ closestLock, onClick, closestWinding, closestTrains }: ClosestSectionProps) => {
   const lockName = removeLockPattern(closestLock?.location?.title ?? "");
   const lockDistanceMiles = parseFloat((closestLock?.distance ?? 0).toFixed(1));
-  const lockDistanceMinutes = milesToMinutes(lockDistanceMiles);
+  const lockDistanceMinutes = getMilesToMinutes(lockDistanceMiles);
   const windingName = closestWinding?.location?.title ?? "";
   const windingDistanceMiles = parseFloat((closestWinding?.distance ?? 0).toFixed(1));
-  const windingDistanceMinutes = milesToMinutes(windingDistanceMiles);
+  const windingDistanceMinutes = getMilesToMinutes(windingDistanceMiles);
   const trainName = closestTrains?.location?.title ?? "";
   const trainDistanceMiles = parseFloat((closestTrains?.distance ?? 0).toFixed(1));
-  const trainDistanceMinutes = milesToMinutes(trainDistanceMiles);
+  const trainDistanceMinutes = getMilesToMinutes(trainDistanceMiles);
   return (
     <Box marginTop="md">
       <Typography variant="h4">Nearest</Typography>

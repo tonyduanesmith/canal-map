@@ -26,8 +26,10 @@ import SearchList from "../../organisms/search-list";
 import ClosestSection from "../../organisms/closest-section";
 import SelectedAnnotation from "../../organisms/selected-annotation";
 import RouteSelector from "../../organisms/route-selector";
+import Route from "../../organisms/route";
 
 const Main = () => {
+  const [routeDistance, setRouteDistance] = useState(0);
   const [startAnnotation, setStartAnnotation] = useState<mapkit.Annotation | null>(null);
   const [endAnnotation, setEndAnnotation] = useState<mapkit.Annotation | null>(null);
   const [startSearchValue, setStartSearchValue] = useState("");
@@ -262,6 +264,7 @@ const Main = () => {
         centerCoords={selectedCoords}
         startCoords={startCoords}
         endCoords={endCoords}
+        onSetRouteDistance={setRouteDistance}
       />
       {/* <StyledLocationWrapper>
         <LocationButton onClick={handleOnLocationClick} />
@@ -342,6 +345,7 @@ const Main = () => {
                   currentLocation={currentLocation}
                 />
               )}
+              {routeDistance !== 0 && <Route distance={routeDistance} />}
             </>
           ) : (
             <>

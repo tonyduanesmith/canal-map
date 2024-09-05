@@ -242,7 +242,7 @@ class PriorityQueue {
   }
 }
 
-export function dijkstra(start: Coordinate, end: Coordinate): Coordinate[] {
+export function dijkstra(start: Coordinate, end: Coordinate): { path: Coordinate[]; distance: number } {
   let distances: Distances = {};
   let prev: Previous = {};
   let pq = new PriorityQueue();
@@ -265,8 +265,9 @@ export function dijkstra(start: Coordinate, end: Coordinate): Coordinate[] {
         if (!graph[startKey]) graph[startKey] = [];
         if (!graph[endKey]) graph[endKey] = [];
 
-        graph[startKey].push({ coord: endCoord, distance: calculateDistance(startCoord, endCoord) });
-        graph[endKey].push({ coord: startCoord, distance: calculateDistance(endCoord, startCoord) });
+        const distance = calculateDistance(startCoord, endCoord);
+        graph[startKey].push({ coord: endCoord, distance });
+        graph[endKey].push({ coord: startCoord, distance });
       }
     }
   });
@@ -304,16 +305,29 @@ export function dijkstra(start: Coordinate, end: Coordinate): Coordinate[] {
     });
   }
 
-  // Reconstruct the shortest path
+  // Reconstruct the shortest path and calculate the total distance
   let path: Coordinate[] = [];
+  let totalDistance = 0;
   let step = endNode;
+
   while (prev[step]) {
     path.unshift(step.split(",").map(Number) as Coordinate);
+
+    // Add the distance between this step and the previous step
+    const prevStep = prev[step];
+    if (prevStep) {
+      const prevCoord = prevStep.split(",").map(Number) as Coordinate;
+      const currentCoord = step.split(",").map(Number) as Coordinate;
+      totalDistance += calculateDistance(prevCoord, currentCoord);
+    }
+
     step = prev[step]!;
   }
+
+  // Add the starting point to the path
   path.unshift(startNode.split(",").map(Number) as Coordinate);
 
-  return path;
+  return { path, distance: totalDistance };
 }
 
 // Function to find the nearest node in the graph to a given coordinate

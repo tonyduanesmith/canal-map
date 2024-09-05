@@ -7,12 +7,3 @@ export const removeLockPattern = (inputString: string): string => {
   // Otherwise, remove all instances of "Lock [number]" from the string.
   return inputString.replace(/Lock \d+,? ?/g, "").trim();
 };
-
-export const milesToMinutes = (miles: number): string => {
-  let minutes = ((miles / 3) * 60).toFixed(1);
-  if (minutes.endsWith(".0")) {
-    minutes = minutes.substring(0, minutes.length - 2);
-  }
-
-  return minutes;
-};
