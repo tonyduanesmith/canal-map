@@ -4,7 +4,7 @@ import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
 import windingImage from "../icons/winding/winding.svg";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
-import { Coordinate, dijkstra, getCoordinatesToOverlay } from "../../pages/main/utils";
+import { Coordinate, dijkstra, findPlacesNearPath, getCoordinatesToOverlay } from "../../pages/main/utils";
 
 interface Props {
   token: string;
@@ -15,7 +15,7 @@ interface Props {
   centerCoords: mapkit.Coordinate | null;
   startCoords: Coordinate | null;
   endCoords: Coordinate | null;
-  onSetRouteDistance: (value: number) => void;
+  path: Array<Coordinate>;
 }
 
 const Map = ({
@@ -27,7 +27,7 @@ const Map = ({
   centerCoords,
   startCoords,
   endCoords,
-  onSetRouteDistance,
+  path,
 }: Props) => {
   const pathOverlayRef = useRef<mapkit.PolylineOverlay>();
   const mapRef = useRef<mapkit.Map>();
@@ -180,12 +180,7 @@ const Map = ({
   }, [centerCoords]);
 
   useEffect(() => {
-    if (startCoords && endCoords && mapRef.current) {
-      const startCoordsOrdered: Coordinate = [startCoords[1], startCoords[0]];
-      const endCoordsOrdered: Coordinate = [endCoords[1], endCoords[0]];
-
-      const { path, distance } = dijkstra(startCoordsOrdered, endCoordsOrdered);
-
+    if (startCoords && endCoords && path && mapRef.current) {
       const pathOverlayStyle = new mapkit.Style({
         lineWidth: 4,
         lineJoin: "round",
@@ -216,11 +211,10 @@ const Map = ({
 
       // Set the map's region to zoom to the calculated area
       mapRef.current.setRegionAnimated(region);
-      onSetRouteDistance(distance);
     } else if (!startCoords && !endCoords && pathOverlayRef.current && mapRef.current) {
       mapRef.current.removeOverlay(pathOverlayRef.current);
     }
-  }, [startCoords, endCoords]);
+  }, [path]);
 
   return <StyledMapContainer id={id} />;
 };

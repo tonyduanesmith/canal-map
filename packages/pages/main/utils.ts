@@ -2,6 +2,8 @@ import lockImageArray from "../../atoms/icons/lock";
 import windingImage from "../../atoms/icons/winding/winding.svg";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 
+const PROXIMITY_THRESHOLD = 50;
+
 export type Coordinate = [number, number];
 
 interface Edge {
@@ -25,6 +27,23 @@ interface PriorityQueueItem {
   element: string;
   priority: number;
 }
+
+export type Place = {
+  properties: {
+    OBJECTID: number;
+    SAP_DESCRIPTION: string;
+    // Other properties...
+  };
+  geometry: {
+    type: string;
+    coordinates: number[];
+  };
+};
+
+type GeoJSONFeatureCollection = {
+  type: string;
+  features: Place[];
+};
 
 export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => {
   return data.features.map(feature => {
@@ -351,3 +370,20 @@ function findNearestNode(graph: Graph, coord: Coordinate): string {
 
   return nearestNode;
 }
+
+export const findPlacesNearPath = (path: Coordinate[], placesList: GeoJSONFeatureCollection) => {
+  const nearbyPlaces = new Set<Place>();
+
+  path.forEach(pathCoord => {
+    placesList.features.forEach(place => {
+      const placeCoord = place.geometry.coordinates;
+      const distance = calculateDistance([pathCoord[1], pathCoord[0]], [placeCoord[1], placeCoord[0]]);
+
+      if (distance <= PROXIMITY_THRESHOLD) {
+        nearbyPlaces.add(place);
+      }
+    });
+  });
+
+  return Array.from(nearbyPlaces);
+};

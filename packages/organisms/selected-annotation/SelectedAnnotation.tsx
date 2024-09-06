@@ -21,7 +21,6 @@ const SelectedAnnotation = ({ title, coords, onSetStartAnnotation, onSetEndAnnot
     const fetchAddress = async () => {
       try {
         const address = await getAddress(coords);
-        console.log(address);
         setAddress(address.results[0]);
       } catch (error) {
         console.log(error);

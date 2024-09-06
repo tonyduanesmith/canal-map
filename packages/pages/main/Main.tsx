@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
 import { useMediaQuery } from "react-responsive";
 
@@ -10,6 +10,8 @@ import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
 import trainsGeoJSON from "../../app/canalMap/public/assets/trains.json";
 import {
   Coordinate,
+  dijkstra,
+  findPlacesNearPath,
   getClosestLocation,
   getGeoJsonLockToAnnotations,
   getGeoJsonToOverlays,
@@ -27,9 +29,12 @@ import ClosestSection from "../../organisms/closest-section";
 import SelectedAnnotation from "../../organisms/selected-annotation";
 import RouteSelector from "../../organisms/route-selector";
 import Route from "../../organisms/route";
+import { Place } from "./utils";
 
 const Main = () => {
   const [routeDistance, setRouteDistance] = useState(0);
+  const [routePath, setRoutePath] = useState<Array<Coordinate>>([]);
+  const [routeLocks, setRouteLocks] = useState<Array<Place>>([]);
   const [startAnnotation, setStartAnnotation] = useState<mapkit.Annotation | null>(null);
   const [endAnnotation, setEndAnnotation] = useState<mapkit.Annotation | null>(null);
   const [startSearchValue, setStartSearchValue] = useState("");
@@ -52,6 +57,19 @@ const Main = () => {
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const isScrollable = snapPoint.snapPoint === 7;
   const { currentLocation } = useCurrentLocation();
+
+  useEffect(() => {
+    if (startCoords && endCoords) {
+      const startCoordsOrdered: Coordinate = [startCoords[1], startCoords[0]];
+      const endCoordsOrdered: Coordinate = [endCoords[1], endCoords[0]];
+
+      const { path, distance } = dijkstra(startCoordsOrdered, endCoordsOrdered);
+      const routeLocks = findPlacesNearPath(path, locksGeoJSON);
+      setRouteDistance(distance);
+      setRoutePath(path);
+      setRouteLocks(routeLocks);
+    }
+  }, [startCoords, endCoords]);
 
   const canalOverlayStyle = useMemo(() => {
     if (!isLoaded) return null;
@@ -264,7 +282,7 @@ const Main = () => {
         centerCoords={selectedCoords}
         startCoords={startCoords}
         endCoords={endCoords}
-        onSetRouteDistance={setRouteDistance}
+        path={routePath}
       />
       {/* <StyledLocationWrapper>
         <LocationButton onClick={handleOnLocationClick} />
@@ -345,7 +363,9 @@ const Main = () => {
                   currentLocation={currentLocation}
                 />
               )}
-              {routeDistance !== 0 && <Route distance={routeDistance} />}
+              {routeDistance !== 0 && !isStartSearchFocused && !isEndSearchFocused && (
+                <Route distance={routeDistance} routeLocks={routeLocks} />
+              )}
             </>
           ) : (
             <>
