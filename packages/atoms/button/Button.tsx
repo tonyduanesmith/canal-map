@@ -2,6 +2,8 @@ import React from "react";
 
 import { StyledButton } from "./styled";
 import { SizeType, VariantType } from "./types";
+import Icon, { IconsType } from "../icons";
+import Box from "../box";
 
 export interface Props {
   children: string | React.ReactNode;
@@ -11,6 +13,7 @@ export interface Props {
   fullWidth?: boolean;
   onClick?: () => void;
   className?: string;
+  code?: IconsType;
 }
 
 const Button = ({
@@ -21,6 +24,7 @@ const Button = ({
   fullWidth = false,
   onClick,
   className,
+  code,
 }: Props) => {
   return (
     <StyledButton
@@ -31,7 +35,10 @@ const Button = ({
       onClick={onClick}
       className={className}
     >
-      {children}
+      <Box display="flex" flexDirection="column" alignItems="center" gap="sm">
+        {children}
+        {code && <Icon code={code} />}
+      </Box>
     </StyledButton>
   );
 };

@@ -34,9 +34,13 @@ const SelectedAnnotation = ({ title, coords, onSetStartAnnotation, onSetEndAnnot
   return (
     <Box>
       <Typography variant="h2">{title}</Typography>
-      <Box display="flex" justifyContent="space-between" paddingTop="md" paddingBottom="md">
-        <Button onClick={onSetStartAnnotation}>Set Start Point</Button>
-        <Button onClick={onSetEndAnnotation}>Set Destination</Button>
+      <Box display="flex" justifyContent="space-between" paddingTop="md" paddingBottom="md" gap="md">
+        <Button onClick={onSetStartAnnotation} fullWidth code="location">
+          Set Start Point
+        </Button>
+        <Button onClick={onSetEndAnnotation} fullWidth code="flagCheckered">
+          Set Destination
+        </Button>
       </Box>
       <Typography variant="h4">Details</Typography>
       <Card padding="md" display="flex">

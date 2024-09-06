@@ -1,4 +1,5 @@
 import { CloseOutline as CloseIcon } from "@styled-icons/evaicons-outline";
+import { LocationDot as LocationDotIcon, FlagCheckered as FlagCheckeredIcon } from "@styled-icons/fa-solid";
 
 import LockCircleIcon from "./lock-circle";
 import WindingCircleIcon from "./winding-circle";
@@ -19,11 +20,13 @@ const iconsMap: Record<string, any> = {
   winding: WindingCircleIcon,
   trains: TrainCircleIcon,
   close: CloseIcon,
+  location: LocationDotIcon,
+  flagCheckered: FlagCheckeredIcon,
 };
 
-const Icon: React.FC<IconProps> = ({ code, ...rest }) => {
+const Icon: React.FC<IconProps> = ({ code, width = 24, height = 24, ...rest }) => {
   const IconComponent = iconsMap[code];
-  return <IconComponent {...rest} />;
+  return <IconComponent width={width} height={height} {...rest} />;
 };
 
 export default Icon;

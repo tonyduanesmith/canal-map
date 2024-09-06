@@ -3,21 +3,18 @@ import styled, { css } from "styled-components";
 import { Props } from "./Button";
 
 const small = css`
-  height: ${p => p.theme.size.sm};
   padding-left: ${p => p.theme.spacing.sm};
   padding-right: ${p => p.theme.spacing.sm};
   font-size: ${p => p.theme.typography.fontSize.sm};
 `;
 
 export const medium = css`
-  height: ${p => p.theme.size.md};
   padding-left: ${p => p.theme.spacing.md};
   padding-right: ${p => p.theme.spacing.md};
   font-size: ${p => p.theme.typography.fontSize.md};
 `;
 
 const large = css`
-  height: ${p => p.theme.size.lg};
   padding-left: ${p => p.theme.spacing.lg};
   padding-right: ${p => p.theme.spacing.lg};
   font-size: ${p => p.theme.typography.fontSize.lg};
