@@ -313,11 +313,13 @@ export function dijkstra(start: Coordinate, end: Coordinate): { path: Coordinate
     if (minNode === endNode) break;
 
     graph[minNode].forEach(neighbor => {
+      //@ts-ignore
       let alt = distances[minNode] + neighbor.distance;
       let neighborKey = neighbor.coord.join(",");
 
       if (alt < distances[neighborKey]) {
         distances[neighborKey] = alt;
+        //@ts-ignore
         prev[neighborKey] = minNode;
         pq.enqueue(neighborKey, alt);
       }
