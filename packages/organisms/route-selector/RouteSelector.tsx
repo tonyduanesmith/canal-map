@@ -4,7 +4,7 @@ import { ThreeDotsVertical as ThreeDotsVerticalIcon, Circle as CircleIcon } from
 
 import Box from "../../atoms/box";
 import Search from "../../atoms/search";
-import Button from "../../atoms/button";
+import IconButton from "../../atoms/icon-button";
 
 type RouteSelectorProps = {
   startSearchValue: string;
@@ -44,7 +44,7 @@ const RouteSelector = ({
 
   return (
     <Box display="flex" gap="sm" flexDirection="column" alignItems="flex-end">
-      <Button onClick={onCancelRoute}>Cancel</Button>
+      <IconButton code="close" onClick={onCancelRoute} variant="grey" />
       <Box display="flex" alignItems="center" gap="sm" width="100%">
         <Box display="flex" flexDirection="column" alignItems="center" gap="sm">
           <CircleIcon height={16} width={16} />

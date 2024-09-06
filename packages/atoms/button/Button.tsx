@@ -10,6 +10,7 @@ export interface Props {
   variant?: VariantType;
   fullWidth?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 const Button = ({
@@ -19,9 +20,17 @@ const Button = ({
   rounded = false,
   fullWidth = false,
   onClick,
+  className,
 }: Props) => {
   return (
-    <StyledButton size={size} rounded={rounded} variant={variant} fullWidth={fullWidth} onClick={onClick}>
+    <StyledButton
+      size={size}
+      rounded={rounded}
+      variant={variant}
+      fullWidth={fullWidth}
+      onClick={onClick}
+      className={className}
+    >
       {children}
     </StyledButton>
   );

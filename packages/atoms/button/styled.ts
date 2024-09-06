@@ -58,6 +58,11 @@ const tertiary = css`
   }
 `;
 
+const grey = css`
+  background-color: ${p => p.theme.palette.neutrals[9]};
+  color: ${p => p.theme.palette.common.white};
+`;
+
 const fullWidth = css`
   width: 100%;
 `;
@@ -88,6 +93,7 @@ export const StyledButton = styled.button<Props>`
   ${p => p.variant === "primary" && primary};
   ${p => p.variant === "secondary" && secondary};
   ${p => p.variant === "tertiary" && tertiary};
+  ${p => p.variant === "grey" && grey};
   ${p => p.rounded && rounded};
   ${p => p.fullWidth && fullWidth};
 `;

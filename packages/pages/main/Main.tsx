@@ -30,6 +30,7 @@ import SelectedAnnotation from "../../organisms/selected-annotation";
 import RouteSelector from "../../organisms/route-selector";
 import Route from "../../organisms/route";
 import { Place } from "./utils";
+import IconButton from "../../atoms/icon-button";
 
 const Main = () => {
   const [routeDistance, setRouteDistance] = useState(0);
@@ -371,7 +372,10 @@ const Main = () => {
             <>
               {selectedAnnotation ? (
                 <Box>
-                  <Button onClick={handleSetSelectedAnnotation}>Cancel</Button>
+                  <Box display="flex" justifyContent="flex-end">
+                    <IconButton code="close" onClick={handleSetSelectedAnnotation} variant="grey" />
+                  </Box>
+
                   <SelectedAnnotation
                     title={selectedAnnotation?.title}
                     coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}

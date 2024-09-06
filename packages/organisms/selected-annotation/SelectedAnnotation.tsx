@@ -32,7 +32,7 @@ const SelectedAnnotation = ({ title, coords, onSetStartAnnotation, onSetEndAnnot
   }, [coords]);
 
   return (
-    <Box marginTop="md">
+    <Box>
       <Typography variant="h2">{title}</Typography>
       <Box display="flex" justifyContent="space-between" paddingTop="md" paddingBottom="md">
         <Button onClick={onSetStartAnnotation}>Set Start Point</Button>
