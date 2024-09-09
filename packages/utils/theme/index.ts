@@ -1,10 +1,22 @@
 import lightPalette from "./lightPalette";
-import darkPalette from "./darkPalette";
-import spacing from "./spacing";
-import size from "./size";
-import shape from "./shape";
-import typography from "./typography";
-import font from "./font";
+import darkPalette, { PaletteType } from "./darkPalette";
+import spacing, { SpacingType } from "./spacing";
+import size, { SizingType } from "./size";
+import shape, { ShapeType } from "./shape";
+import typography, { TypographyType } from "./typography";
+
+export type ThemeSelectionType = {
+  light: ThemeType;
+  dark: ThemeType;
+};
+
+export type ThemeType = {
+  size: SizingType;
+  spacing: SpacingType;
+  shape: ShapeType;
+  typography: TypographyType;
+  palette: PaletteType;
+};
 
 const dark = {
   palette: darkPalette,
@@ -12,7 +24,6 @@ const dark = {
   size,
   shape,
   typography,
-  font,
 };
 
 const light = {
@@ -21,7 +32,6 @@ const light = {
   size,
   shape,
   typography,
-  font,
 };
 
 const theme = {

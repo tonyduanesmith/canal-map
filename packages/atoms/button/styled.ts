@@ -11,6 +11,8 @@ const small = css`
 export const medium = css`
   padding-left: ${p => p.theme.spacing.md};
   padding-right: ${p => p.theme.spacing.md};
+  padding-top: ${p => p.theme.spacing.sm};
+  padding-bottom: ${p => p.theme.spacing.sm};
   font-size: ${p => p.theme.typography.fontSize.md};
 `;
 
@@ -57,7 +59,7 @@ const tertiary = css`
 
 const grey = css`
   background-color: ${p => p.theme.palette.neutrals[9]};
-  color: ${p => p.theme.palette.common.white};
+  color: ${p => p.theme.palette.common};
 `;
 
 const fullWidth = css`
@@ -68,7 +70,7 @@ export const StyledButton = styled.button<Props>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: ${p => p.theme.shape.radius};
+  border-radius: ${p => p.theme.shape.borderRadius.sm};
   outline: none;
   border: none;
   cursor: pointer;

@@ -6,7 +6,7 @@ import { useDrag } from "react-use-gesture";
 import { StyledListItem } from "./styled";
 import Icon from "../icons";
 import theme from "../../utils/theme";
-import { SystemColors } from "../../utils/theme/darkPalette";
+import { PaletteSystemColours } from "../../utils/theme/darkPalette";
 import { getDistanceInMiles } from "../../pages/main/utils";
 import Typography from "../typography";
 
@@ -23,7 +23,7 @@ type ListItemProps = ListChildComponentProps<ItemData>;
 const ListItem = ({ index, style, data }: ListItemProps) => {
   const item = data.items[index];
   const currentLocation = data.currentLocation;
-  const itemColor: keyof SystemColors = item.data.color;
+  const itemColor: keyof PaletteSystemColours = item.data.color;
   const backgroundColor = theme.dark.palette.system[itemColor].main;
   if (!item) return null;
 

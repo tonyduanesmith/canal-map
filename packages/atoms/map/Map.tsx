@@ -6,7 +6,7 @@ import windingImage from "../icons/winding/winding.svg";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import { Coordinate, dijkstra, findPlacesNearPath, getCoordinatesToOverlay } from "../../pages/main/utils";
 
-interface Props {
+type MapProps = {
   token: string;
   id: string;
   showsUserLocation?: boolean;
@@ -16,7 +16,7 @@ interface Props {
   startCoords: Coordinate | null;
   endCoords: Coordinate | null;
   path: Array<Coordinate>;
-}
+};
 
 const Map = ({
   token,
@@ -28,7 +28,7 @@ const Map = ({
   startCoords,
   endCoords,
   path,
-}: Props) => {
+}: MapProps) => {
   const pathOverlayRef = useRef<mapkit.PolylineOverlay>();
   const mapRef = useRef<mapkit.Map>();
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
@@ -182,9 +182,9 @@ const Map = ({
   useEffect(() => {
     if (startCoords && endCoords && path && mapRef.current) {
       const pathOverlayStyle = new mapkit.Style({
-        lineWidth: 4,
+        lineWidth: 8,
         lineJoin: "round",
-        strokeColor: "red",
+        strokeColor: "blue",
         strokeOpacity: 0.5,
       });
 

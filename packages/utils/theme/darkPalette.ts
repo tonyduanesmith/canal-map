@@ -1,50 +1,41 @@
 import { lighten, darken } from "polished";
 
-type ColorVariants = {
-  main: string;
-  light: string;
-  dark: string;
-};
+type PaletteBackgroundType = typeof palette.background;
+type PaletteNeutralsType = typeof palette.neutrals;
+type PaletteColorVariantsType = typeof palette.variants.primary;
+type PaletteCommonType = typeof palette.common;
+type PaletteShadowType = typeof palette.shadow;
+type PaletteInsetShadowType = typeof palette.insetShadow;
+type PaletteDividerType = typeof palette.divider;
+export type PaletteSystemColours = typeof palette.system;
 
-type Neutrals = {
-  [key: string]: string;
-};
-
-export type SystemColors = {
-  blue: ColorVariants;
-  green: ColorVariants;
-  indigo: ColorVariants;
-  orange: ColorVariants;
-  pink: ColorVariants;
-  purple: ColorVariants;
-  red: ColorVariants;
-  teal: ColorVariants;
-  yellow: ColorVariants;
-  black: ColorVariants;
-};
-
-type ThemeType = {
-  background: {
-    default: string;
-  };
-  neutrals: Neutrals;
+export type PaletteType = {
+  background: PaletteBackgroundType;
+  neutrals: PaletteNeutralsType;
   variants: {
-    danger: ColorVariants;
-    primary: ColorVariants;
-    secondary: ColorVariants;
-    tertiary: ColorVariants;
+    primary: PaletteColorVariantsType;
+    secondary: PaletteColorVariantsType;
+    tertiary: PaletteColorVariantsType;
+    danger: PaletteColorVariantsType;
   };
-  system: SystemColors;
-  common: {
-    black: string;
-    white: string;
+  system: {
+    blue: PaletteColorVariantsType;
+    green: PaletteColorVariantsType;
+    orange: PaletteColorVariantsType;
+    pink: PaletteColorVariantsType;
+    purple: PaletteColorVariantsType;
+    red: PaletteColorVariantsType;
+    teal: PaletteColorVariantsType;
+    yellow: PaletteColorVariantsType;
+    black: PaletteColorVariantsType;
   };
-  shadow: string[];
-  insetShadow: string[];
-  divider: string;
+  common: PaletteCommonType;
+  shadow: PaletteShadowType;
+  insetShadow: PaletteInsetShadowType;
+  divider: PaletteDividerType;
 };
 
-const theme: ThemeType = {
+const palette = {
   background: {
     default: "#282C34",
   },
@@ -162,4 +153,4 @@ const theme: ThemeType = {
   divider: "rgba(0, 0, 0, 0.1)",
 };
 
-export default theme;
+export default palette;

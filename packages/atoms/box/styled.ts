@@ -1,7 +1,7 @@
 import { ReactNode, CSSProperties } from "react";
 
 import styled from "styled-components";
-import spacing, { Spacing } from "../../utils/theme/spacing";
+import spacing, { SpacingType } from "../../utils/theme/spacing";
 
 export interface BoxProps {
   top?: CSSProperties["top"];
@@ -18,19 +18,19 @@ export interface BoxProps {
   height?: CSSProperties["height"];
   bgColor?: CSSProperties["backgroundColor"];
   color?: CSSProperties["color"];
-  padding?: Spacing;
-  paddingTop?: Spacing;
-  paddingBottom?: Spacing;
-  paddingRight?: Spacing;
-  paddingLeft?: Spacing;
-  margin?: Spacing;
-  marginTop?: Spacing;
-  marginBottom?: Spacing;
-  marginRight?: Spacing;
-  marginLeft?: Spacing;
+  padding?: keyof SpacingType;
+  paddingTop?: keyof SpacingType;
+  paddingBottom?: keyof SpacingType;
+  paddingRight?: keyof SpacingType;
+  paddingLeft?: keyof SpacingType;
+  margin?: keyof SpacingType;
+  marginTop?: keyof SpacingType;
+  marginBottom?: keyof SpacingType;
+  marginRight?: keyof SpacingType;
+  marginLeft?: keyof SpacingType;
   children?: ReactNode;
   style?: CSSProperties;
-  gap?: Spacing;
+  gap?: keyof SpacingType;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 

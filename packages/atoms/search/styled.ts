@@ -8,10 +8,10 @@ export const StyledSearch = styled.input`
   flex: 1;
   width: 100%;
   height: ${({ theme }) => theme.spacing.lg};
-  border-radius: ${({ theme }) => theme.shape.borderRadius.medium};
+  border-radius: ${({ theme }) => theme.shape.borderRadius.md};
   border: none;
   padding-left: 34px;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.typography.fontSize.md};
 `;
 
 export const StyledSearchIcon = styled(SearchIcon)`

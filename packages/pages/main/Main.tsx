@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
 import { useMediaQuery } from "react-responsive";
+import { useTheme } from "styled-components";
 
 import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
@@ -58,6 +59,7 @@ const Main = () => {
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const isScrollable = snapPoint.snapPoint === 7;
   const { currentLocation } = useCurrentLocation();
+  const theme = useTheme();
 
   useEffect(() => {
     if (startCoords && endCoords) {
@@ -78,7 +80,7 @@ const Main = () => {
     return new mapkit.Style({
       lineWidth: 4,
       lineJoin: "round",
-      strokeColor: "#0000FF",
+      strokeColor: theme.palette.system.teal.main,
       strokeOpacity: 0.5,
     });
   }, [isLoaded]);
@@ -268,7 +270,7 @@ const Main = () => {
     setIsEndSearchFocused(false);
   };
 
-  const handleSetSelectedAnnotation = () => {
+  const handleSetSelectedAnnotation = (): void => {
     setSelectedAnnotation(null);
   };
 

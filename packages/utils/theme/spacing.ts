@@ -1,7 +1,7 @@
 const spacing = {
   none: "0",
-  xs: "0.25rem",
-  sm: "0.5rem",
+  xs: "0.20rem",
+  sm: "0.4rem",
   md: "1rem",
   lg: "2rem",
   xl: "4rem",
@@ -9,4 +9,4 @@ const spacing = {
 };
 
 export default spacing;
-export type Spacing = keyof typeof spacing;
+export type SpacingType = typeof spacing;
