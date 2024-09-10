@@ -33,7 +33,11 @@ import Route from "../../organisms/route";
 import { Place } from "./utils";
 import IconButton from "../../atoms/icon-button";
 
-const Main = () => {
+type MainProps = {
+  isLoaded: boolean;
+};
+
+const Main = ({ isLoaded }: MainProps) => {
   const [routeDistance, setRouteDistance] = useState(0);
   const [routePath, setRoutePath] = useState<Array<Coordinate>>([]);
   const [routeLocks, setRouteLocks] = useState<Array<Place>>([]);
@@ -56,7 +60,6 @@ const Main = () => {
   const [filteredEndSearchAnnotations, setFilteredEndSearchAnnotations] = useState<mapkit.ImageAnnotation[]>([]);
   const [snapPoint, setSnapPoint] = useState({ snapPoint: 50, forceUpdate: false });
   const [disableGesture, setDisableGesture] = useState(false);
-  const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
   const isScrollable = snapPoint.snapPoint === 7;
   const { currentLocation } = useCurrentLocation();
   const theme = useTheme();
@@ -80,7 +83,7 @@ const Main = () => {
     return new mapkit.Style({
       lineWidth: 4,
       lineJoin: "round",
-      strokeColor: theme.palette.system.teal.main,
+      strokeColor: theme.palette.system.blue.main,
       strokeOpacity: 0.5,
     });
   }, [isLoaded]);
@@ -166,8 +169,6 @@ const Main = () => {
   const closestLock = getClosestLocation(currentLocation, locksAnnotations ?? []);
   const closestWinding = getClosestLocation(currentLocation, windingAnnotations ?? []);
   const closestTrains = getClosestLocation(currentLocation, trainsAnnotations ?? []);
-
-  if (!isLoaded) return null;
 
   const handleOnListItemClick = (annotation: mapkit.ImageAnnotation) => {
     setTimeout(() => {

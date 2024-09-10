@@ -120,7 +120,9 @@ const Map = ({
         );
 
         if (mapRef.current === undefined) {
-          mapRef.current = new mapkit.Map(id);
+          mapRef.current = new mapkit.Map(id, {
+            colorScheme: mapkit.Map.ColorSchemes.Dark,
+          });
         }
 
         if (mapRef.current) {
