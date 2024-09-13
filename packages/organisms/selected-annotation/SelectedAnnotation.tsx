@@ -6,31 +6,24 @@ import Typography from "../../atoms/typography";
 import { getAddress } from "./utils";
 import Divider from "../../atoms/divider";
 import Button from "../../atoms/button";
-import { Coordinate } from "../../pages/main/utils";
+import { AddressType, Coordinate } from "../../pages/main/utils";
 
 type SelectedAnnotationProps = {
   title: string;
   coords: Coordinate;
   onSetStartAnnotation: () => void;
   onSetEndAnnotation: () => void;
+  address?: AddressType;
 };
 
-const SelectedAnnotation = ({ title, coords, onSetStartAnnotation, onSetEndAnnotation }: SelectedAnnotationProps) => {
-  const [address, setAddress] = useState<mapkit.Place | null>(null);
-  useEffect(() => {
-    const fetchAddress = async () => {
-      try {
-        const address = await getAddress(coords);
-        setAddress(address.results[0]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (coords) {
-      fetchAddress();
-    }
-  }, [coords]);
-
+const SelectedAnnotation = ({
+  title,
+  coords,
+  onSetStartAnnotation,
+  onSetEndAnnotation,
+  address,
+}: SelectedAnnotationProps) => {
+  console.log(address);
   return (
     <Box>
       <Typography variant="h2">{title}</Typography>
@@ -48,6 +41,7 @@ const SelectedAnnotation = ({ title, coords, onSetStartAnnotation, onSetEndAnnot
           <Box display="flex" flexDirection="column" flex={1}>
             <Typography bold>Address</Typography>
             <Typography color="">{address.name}</Typography>
+            <Typography>{address.subLocality}</Typography>
             <Typography>{address.locality}</Typography>
             <Typography>{address.postCode}</Typography>
             <Typography>{address.administrativeArea}</Typography>

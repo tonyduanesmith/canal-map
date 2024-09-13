@@ -304,6 +304,7 @@ const Main = ({ isLoaded }: MainProps) => {
               coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
               onSetEndAnnotation={handleSetEndAnnotation}
               onSetStartAnnotation={handleSetStartAnnotation}
+              address={selectedAnnotation.data.address}
             />
           )}
           <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
@@ -384,6 +385,7 @@ const Main = ({ isLoaded }: MainProps) => {
                     coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
                     onSetEndAnnotation={handleSetEndAnnotation}
                     onSetStartAnnotation={handleSetStartAnnotation}
+                    address={selectedAnnotation.data.address}
                   />
                 </Box>
               ) : (

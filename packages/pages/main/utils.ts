@@ -28,11 +28,25 @@ interface PriorityQueueItem {
   priority: number;
 }
 
+export type AddressType = {
+  _wpURL?: string;
+  name?: string;
+  formattedAddress?: string;
+  countryCode?: string;
+  country?: string;
+  administrativeArea?: string;
+  locality?: string;
+  postCode?: string;
+  subLocality?: string;
+  thoroughfare?: string;
+  fullThoroughfare?: string;
+};
+
 export type Place = {
   properties: {
     OBJECTID: number;
     SAP_DESCRIPTION: string;
-    // Other properties...
+    address?: AddressType;
   };
   geometry: {
     type: string;
@@ -60,6 +74,7 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       data: {
         angle,
         color: "black",
+        address: feature.properties?.address,
       },
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "lock",
