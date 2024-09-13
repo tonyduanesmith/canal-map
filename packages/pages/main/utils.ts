@@ -100,6 +100,7 @@ export const getGeoJsonWindingToAnnotations = (data: GeoJSON.FeatureCollection) 
       title: feature.properties?.sap_description ?? "",
       data: {
         color: "orange",
+        address: feature.properties?.address,
       },
     });
     return annotation;
@@ -122,6 +123,7 @@ export const getGeoJsonToTrainsAnnotations = (data: GeoJSON.FeatureCollection) =
       title: feature.properties?.station_name ?? "",
       data: {
         color: "teal",
+        address: feature.properties?.address,
       },
     });
     return annotation;

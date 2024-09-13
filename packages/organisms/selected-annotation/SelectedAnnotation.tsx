@@ -23,7 +23,6 @@ const SelectedAnnotation = ({
   onSetEndAnnotation,
   address,
 }: SelectedAnnotationProps) => {
-  console.log(address);
   return (
     <Box>
       <Typography variant="h2">{title}</Typography>
