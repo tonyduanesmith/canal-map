@@ -43,6 +43,7 @@ export const useIsMapkitLoaded = ({ token }: UseIsMapkitLoadedProps): boolean =>
             });
 
             mapkitLoaded = true;
+            resolve();
           } catch (error) {
             reject(error);
           }
