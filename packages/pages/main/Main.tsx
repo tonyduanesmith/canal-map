@@ -19,7 +19,7 @@ import {
   getGeoJsonToTrainsAnnotations,
   getGeoJsonWindingToAnnotations,
 } from "./utils";
-import { useIsMapkitLoaded, useCurrentLocation } from "../../utils/helpers/hooks";
+import { useCurrentLocation } from "../../utils/helpers/hooks";
 import Search from "../../atoms/search";
 import Button from "../../atoms/button";
 import Box from "../../atoms/box/Box";
@@ -143,24 +143,31 @@ const Main = ({ isLoaded }: MainProps) => {
   };
 
   const handleOnSearchChange = async (value: string) => {
-    const filteredSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
-      annotation.title.toLowerCase().includes(value.toLowerCase()),
+    const filteredSearchAnnotations = combinedSearchAnnotations?.filter(
+      annotation =>
+        annotation.title.toLowerCase().includes(value.toLowerCase()) ||
+        annotation.data?.address?.subLocality?.toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredSearchAnnotations(filteredSearchAnnotations ?? []);
     setSearchValue(value);
   };
 
   const handleOnStartAnnotationChange = async (value: string) => {
-    const filteredStartSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
-      annotation.title.toLowerCase().includes(value.toLowerCase()),
-    );
+    const filteredStartSearchAnnotations = combinedSearchAnnotations?.filter(annotation => {
+      return (
+        annotation.title.toLowerCase().includes(value.toLowerCase()) ||
+        annotation.data?.address?.subLocality?.toLowerCase().includes(value.toLowerCase())
+      );
+    });
     setFilteredStartSearchAnnotations(filteredStartSearchAnnotations ?? []);
     setStartSearchValue(value);
   };
 
   const handleOnEndAnnotationChange = async (value: string) => {
-    const filteredEndSearchAnnotations = combinedSearchAnnotations?.filter(annotation =>
-      annotation.title.toLowerCase().includes(value.toLowerCase()),
+    const filteredEndSearchAnnotations = combinedSearchAnnotations?.filter(
+      annotation =>
+        annotation.title.toLowerCase().includes(value.toLowerCase()) ||
+        annotation.data?.address?.subLocality?.toLowerCase().includes(value.toLowerCase()),
     );
     setFilteredEndSearchAnnotations(filteredEndSearchAnnotations ?? []);
     setEndSearchValue(value);

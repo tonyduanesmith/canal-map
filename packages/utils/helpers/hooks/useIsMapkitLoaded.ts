@@ -1,44 +1,66 @@
 import { useEffect, useState } from "react";
 
-// A simple flag to ensure MapKit is only initialized once
-let mapKitInitialized = false;
+let mapkitLoaded = false;
+let mapkitLoadPromise: Promise<void> | null = null;
 
-export const useIsMapkitLoaded = ({ token }: { token: string }) => {
+declare global {
+  interface Window {
+    mapkit: any;
+  }
+}
+
+type UseIsMapkitLoadedProps = {
+  token: string;
+};
+
+export const useIsMapkitLoaded = ({ token }: UseIsMapkitLoadedProps): boolean => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const setupMapKitJs = async () => {
-      // Check if MapKit has already been initialized
-      if (window.mapkit && mapKitInitialized) {
+      if (mapkitLoaded) {
         setIsLoaded(true);
         return;
       }
 
-      console.log("loading mapkit");
-
-      // Wait for the MapKit script to finish loading
-      await new Promise(resolve => {
-        // @ts-ignore
-        window.initMapKit = resolve;
-      });
-
-      console.log("loaded mapkit woohoo");
-
-      // Clean up the callback after MapKit is loaded
-      // @ts-ignore
-      delete window.initMapKit;
-
-      // Initialize MapKit if not already initialized
-      if (!mapKitInitialized) {
-        mapkit.init({
-          authorizationCallback: done => {
-            done(token);
-          },
-        });
-        mapKitInitialized = true; // Mark MapKit as initialized
+      if (mapkitLoadPromise) {
+        await mapkitLoadPromise;
+        setIsLoaded(true);
+        return;
       }
 
-      setIsLoaded(true); // Mark as loaded
+      mapkitLoadPromise = new Promise<void>((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.js";
+        script.async = true;
+
+        script.onload = () => {
+          try {
+            window.mapkit.init({
+              authorizationCallback: (done: (token: string) => void) => {
+                done(token);
+              },
+            });
+
+            mapkitLoaded = true;
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        script.onerror = error => {
+          reject(new Error(`Failed to load MapKit script: ${error}`));
+        };
+
+        document.head.appendChild(script);
+      });
+
+      try {
+        await mapkitLoadPromise;
+        setIsLoaded(true);
+      } catch (error) {
+        console.error("Error initializing MapKit:", error);
+      }
     };
 
     setupMapKitJs();
