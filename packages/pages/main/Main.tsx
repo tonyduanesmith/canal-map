@@ -305,41 +305,86 @@ const Main = ({ isLoaded }: MainProps) => {
           onSnapPointChange={handleSnapPointChange}
           disableGesture={disableGesture}
         >
-          {selectedAnnotation && (
-            <SelectedAnnotation
-              title={selectedAnnotation?.title}
-              coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
-              onSetEndAnnotation={handleSetEndAnnotation}
-              onSetStartAnnotation={handleSetStartAnnotation}
-              address={selectedAnnotation.data.address}
-            />
-          )}
-          <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-            <Search
-              onSearchFocus={handleOnSearchFocus}
-              value={searchValue}
-              onChange={handleOnSearchChange}
-              marginRight="md"
-            />
-            <Button onClick={handleOnSearchCancel}>Cancel</Button>
-          </Box>
-          {snapPoint.snapPoint === 7 && !selectedAnnotation && (
-            <SearchList
-              isScrollable={isScrollable}
-              onScroll={handleOnScroll}
-              itemCount={getFilteredSearchAnnotations?.length ?? 0}
-              items={getFilteredSearchAnnotations ?? []}
-              onClick={handleOnListItemClick}
-              currentLocation={currentLocation}
-            />
-          )}
-          {snapPoint.snapPoint !== 7 && !selectedAnnotation && (
-            <ClosestSection
-              closestLock={closestLock}
-              onClick={handleOnListItemClick}
-              closestWinding={closestWinding}
-              closestTrains={closestTrains}
-            />
+          {startAnnotation || endAnnotation ? (
+            <>
+              <RouteSelector
+                startSearchValue={startSearchValue}
+                endSearchValue={endSearchValue}
+                onStartSearchValueChange={handleOnStartAnnotationChange}
+                onEndSearchValueChange={handleOnEndAnnotationChange}
+                onCancelRoute={handleCancelRoute}
+                onStartSearchFocus={handleStartSearchFocus}
+                onEndSearchFocus={handleEndSearchFocus}
+              />
+              {isStartSearchFocused && (
+                <SearchList
+                  isScrollable
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredStartAnnotations?.length ?? 0}
+                  items={getFilteredStartAnnotations ?? []}
+                  onClick={handleStartAnnotationItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+              {isEndSearchFocused && (
+                <SearchList
+                  isScrollable
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredEndAnnotations?.length ?? 0}
+                  items={getFilteredEndAnnotations ?? []}
+                  onClick={handleEndAnnotationItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+              {routeDistance !== 0 && !isStartSearchFocused && !isEndSearchFocused && (
+                <Route distance={routeDistance} routeLocks={routeLocks} />
+              )}
+            </>
+          ) : (
+            <>
+              {selectedAnnotation ? (
+                <Box>
+                  <Box display="flex" justifyContent="flex-end">
+                    <IconButton code="close" onClick={handleSetSelectedAnnotation} variant="grey" />
+                  </Box>
+                  <SelectedAnnotation
+                    title={selectedAnnotation?.title}
+                    coords={[selectedAnnotation.coordinate.latitude, selectedAnnotation.coordinate.longitude]}
+                    onSetEndAnnotation={handleSetEndAnnotation}
+                    onSetStartAnnotation={handleSetStartAnnotation}
+                    address={selectedAnnotation.data.address}
+                  />
+                </Box>
+              ) : (
+                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+                  <Search
+                    onSearchFocus={handleOnSearchFocus}
+                    value={searchValue}
+                    onChange={handleOnSearchChange}
+                    marginRight="md"
+                  />
+                  <Button onClick={handleOnSearchCancel}>Cancel</Button>
+                </Box>
+              )}
+              {snapPoint.snapPoint === 7 && !selectedAnnotation && (
+                <SearchList
+                  isScrollable={isScrollable}
+                  onScroll={handleOnScroll}
+                  itemCount={getFilteredSearchAnnotations?.length ?? 0}
+                  items={getFilteredSearchAnnotations ?? []}
+                  onClick={handleOnListItemClick}
+                  currentLocation={currentLocation}
+                />
+              )}
+              {snapPoint.snapPoint !== 7 && !selectedAnnotation && (
+                <ClosestSection
+                  closestLock={closestLock}
+                  onClick={handleOnListItemClick}
+                  closestWinding={closestWinding}
+                  closestTrains={closestTrains}
+                />
+              )}
+            </>
           )}
         </BottomSheet>
       ) : (
