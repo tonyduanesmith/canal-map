@@ -52,6 +52,7 @@ const ListItem = ({ index, style, data }: ListItemProps) => {
       </Box>
       <Box>
         <Typography bold>{item.title}</Typography>
+        <Typography>{item.data.address.subLocality}</Typography>
         <Typography>{`${distanceInMiles} miles`}</Typography>
       </Box>
     </StyledListItem>

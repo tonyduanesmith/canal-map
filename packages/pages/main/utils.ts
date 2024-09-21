@@ -79,6 +79,7 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "lock",
       title: feature.properties?.SAP_DESCRIPTION ?? "",
+      subtitle: feature.properties?.address?.subLocality,
     });
     return annotation;
   });
