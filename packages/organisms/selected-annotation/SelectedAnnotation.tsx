@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Box from "../../atoms/box";
 import Card from "../../atoms/card";
 import Typography from "../../atoms/typography";
-import { getAddress } from "./utils";
 import Divider from "../../atoms/divider";
 import Button from "../../atoms/button";
 import { AddressType, Coordinate } from "../../pages/main/utils";
