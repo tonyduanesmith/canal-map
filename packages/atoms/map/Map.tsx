@@ -3,7 +3,7 @@ import { StyledMapContainer } from "./styled";
 import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
 import windingImage from "../icons/winding/winding.svg";
-import bridgeImage from "../icons/bridge/bridge.svg";
+import bridgeImageArray from "../icons/bridge";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import { Coordinate, dijkstra, findPlacesNearPath, getCoordinatesToOverlay } from "../../pages/main/utils";
 
@@ -156,9 +156,10 @@ const Map = ({
               });
             }
             if (clusterAnnotation.clusteringIdentifier === "bridge") {
+              const angle = Math.ceil(clusterAnnotation.memberAnnotations[0]?.data?.angle ?? 0);
               return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
                 url: {
-                  1: bridgeImage,
+                  1: bridgeImageArray[angle],
                 },
                 size: {
                   width: 20,
