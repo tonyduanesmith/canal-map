@@ -64,12 +64,23 @@ const Map = ({
         if (mapRef.current === undefined) {
           mapRef.current = new mapkit.Map(id, {
             colorScheme: mapkit.Map.ColorSchemes.Dark,
+            isZoomEnabled: true,
+            isScrollEnabled: true,
+            showsZoomControl: true,
           });
         }
+
+        // Allow trackpad wheel/pinch to zoom
+        (mapRef.current as any)._allowWheelToZoom = true;
 
         if (mapRef.current) {
           // Center map on initial region
           mapRef.current.region = currentRegion;
+          // Disable default touch actions on the map container to allow trackpad gestures
+          const mapContainer = document.getElementById(id);
+          if (mapContainer) {
+            mapContainer.style.touchAction = "none";
+          }
 
           // Build Supercluster index (once)
           if (!clusterIndexRef.current) {
@@ -92,11 +103,6 @@ const Map = ({
 
           // Function to update clusters as annotations
           const updateClusters = () => {
-            // disable built-in clustering for raw annotations
-            annotations.forEach(a => {
-              (a as any).clusteringIdentifier = null;
-            });
-
             const region = mapRef.current!.region;
             const width = mapRef.current!.element.clientWidth;
             const zoom = Math.floor(Math.log2((width * 360) / (region.span.longitudeDelta * 256)));

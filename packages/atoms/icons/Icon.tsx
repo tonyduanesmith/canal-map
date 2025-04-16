@@ -28,6 +28,10 @@ const iconsMap: Record<string, any> = {
 
 const Icon: React.FC<IconProps> = ({ code, width = 24, height = 24, ...rest }) => {
   const IconComponent = iconsMap[code];
+  if (!IconComponent) {
+    console.warn(`Icon code "${code}" is not mapped to a component.`);
+    return null;
+  }
   return <IconComponent width={width} height={height} {...rest} />;
 };
 
