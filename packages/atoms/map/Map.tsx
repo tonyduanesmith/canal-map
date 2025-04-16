@@ -3,6 +3,7 @@ import { StyledMapContainer } from "./styled";
 import { getGeoLocationWithCache } from "./utils";
 import lockClusterImageArray from "../icons/lock-cluster";
 import windingImage from "../icons/winding/winding.svg";
+import bridgeImage from "../icons/bridge/bridge.svg";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import { Coordinate, dijkstra, findPlacesNearPath, getCoordinatesToOverlay } from "../../pages/main/utils";
 
@@ -145,6 +146,19 @@ const Map = ({
               return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
                 url: {
                   1: windingImage,
+                },
+                size: {
+                  width: 20,
+                  height: 20,
+                },
+                anchorOffset: new DOMPoint(0, -10),
+                animates: false, // Disable animation for cluster annotations
+              });
+            }
+            if (clusterAnnotation.clusteringIdentifier === "bridge") {
+              return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
+                url: {
+                  1: bridgeImage,
                 },
                 size: {
                   width: 20,

@@ -6,6 +6,7 @@ import { useTheme } from "styled-components";
 import Map from "../../atoms/map";
 import BottomSheet from "../../atoms/bottom-sheet";
 import locksGeoJSON from "../../app/canalMap/public/assets/locks.json";
+import bridgesGeoJSON from "../../app/canalMap/public/assets/bridges.json";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 import windingGeoJSON from "../../app/canalMap/public/assets/winding.json";
 import trainsGeoJSON from "../../app/canalMap/public/assets/trains.json";
@@ -15,6 +16,7 @@ import {
   findPlacesNearPath,
   getClosestLocation,
   getGeoJsonLockToAnnotations,
+  getGeoJsonBridgesToAnnotations,
   getGeoJsonToOverlays,
   getGeoJsonToTrainsAnnotations,
   getGeoJsonWindingToAnnotations,
@@ -93,6 +95,11 @@ const Main = ({ isLoaded }: MainProps) => {
     return getGeoJsonLockToAnnotations(locksGeoJSON as GeoJSON.FeatureCollection) ?? [];
   }, [locksGeoJSON, isLoaded]);
 
+  const bridgesAnnotations = useMemo(() => {
+    if (!isLoaded) return [];
+    return getGeoJsonBridgesToAnnotations(bridgesGeoJSON as GeoJSON.FeatureCollection) ?? [];
+  }, [locksGeoJSON, isLoaded]);
+
   const windingAnnotations = useMemo(() => {
     if (!isLoaded) return [];
     return getGeoJsonWindingToAnnotations(windingGeoJSON as GeoJSON.FeatureCollection) ?? [];
@@ -104,11 +111,11 @@ const Main = ({ isLoaded }: MainProps) => {
   }, [trainsGeoJSON, isLoaded]);
 
   const combinedMapAnnotations = useMemo(() => {
-    return [...locksAnnotations, ...windingAnnotations];
+    return [...locksAnnotations, ...windingAnnotations, ...bridgesAnnotations];
   }, [locksAnnotations, windingAnnotations]);
 
   const combinedSearchAnnotations = useMemo(() => {
-    return [...locksAnnotations, ...windingAnnotations, ...trainsAnnotations];
+    return [...locksAnnotations, ...windingAnnotations, ...trainsAnnotations, ...bridgesAnnotations];
   }, [locksAnnotations, windingAnnotations, trainsAnnotations]);
 
   const canalOverlay = useMemo(() => {

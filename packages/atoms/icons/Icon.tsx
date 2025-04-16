@@ -4,6 +4,7 @@ import { LocationDot as LocationDotIcon, FlagCheckered as FlagCheckeredIcon } fr
 import LockCircleIcon from "./lock-circle";
 import WindingCircleIcon from "./winding-circle";
 import TrainCircleIcon from "./train-circle";
+import BridgeCircleIcon from "./bridge-circle";
 
 export type IconsType = keyof typeof iconsMap;
 
@@ -22,6 +23,7 @@ const iconsMap: Record<string, any> = {
   close: CloseIcon,
   location: LocationDotIcon,
   flagCheckered: FlagCheckeredIcon,
+  bridge: BridgeCircleIcon,
 };
 
 const Icon: React.FC<IconProps> = ({ code, width = 24, height = 24, ...rest }) => {

@@ -17,6 +17,7 @@ export const StyledSheet = styled(animated.div)`
   padding: ${({ theme }) => theme.spacing.md};
   padding-top: 0;
   box-sizing: border-box;
+  touch-action: none;
 `;
 
 export const StyledHandle = styled.div`

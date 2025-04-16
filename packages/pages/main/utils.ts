@@ -1,5 +1,6 @@
 import lockImageArray from "../../atoms/icons/lock";
 import windingImage from "../../atoms/icons/winding/winding.svg";
+import bridgeImageArray from "../../atoms/icons/bridge";
 import canalGeoJSON from "../../app/canalMap/public/assets/canals.json";
 
 const PROXIMITY_THRESHOLD = 50;
@@ -79,6 +80,32 @@ export const getGeoJsonLockToAnnotations = (data: GeoJSON.FeatureCollection) => 
       anchorOffset: new DOMPoint(0, -10),
       clusteringIdentifier: "lock",
       title: feature.properties?.SAP_DESCRIPTION ?? "",
+      subtitle: feature.properties?.address?.subLocality,
+    });
+    return annotation;
+  });
+};
+
+export const getGeoJsonBridgesToAnnotations = (data: GeoJSON.FeatureCollection) => {
+  return data.features.map(feature => {
+    const geometry = feature.geometry as GeoJSON.Point;
+    const [longitude, latitude] = geometry.coordinates;
+    const coords = new mapkit.Coordinate(latitude, longitude);
+    const angle = Math.ceil(feature.properties?.angle ?? 0);
+    const annotation = new mapkit.ImageAnnotation(coords, {
+      url: { 1: bridgeImageArray[angle] },
+      size: {
+        width: 20,
+        height: 20,
+      },
+      data: {
+        angle,
+        color: "green",
+        address: feature.properties?.address,
+      },
+      anchorOffset: new DOMPoint(0, -10),
+      clusteringIdentifier: "bridge",
+      title: feature.properties?.sap_description ?? "",
       subtitle: feature.properties?.address?.subLocality,
     });
     return annotation;

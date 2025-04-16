@@ -1,7 +1,6 @@
 import { ListChildComponentProps } from "react-window";
-import LockCircleIcon from "../icons/lock-circle";
 import Box from "../box";
-import { useDrag } from "react-use-gesture";
+import { useDrag } from "@use-gesture/react";
 
 import { StyledListItem } from "./styled";
 import Icon from "../icons";
@@ -23,9 +22,10 @@ type ListItemProps = ListChildComponentProps<ItemData>;
 const ListItem = ({ index, style, data }: ListItemProps) => {
   const item = data.items[index];
   const currentLocation = data.currentLocation;
+  if (!item) return null;
+
   const itemColor: keyof PaletteSystemColours = item.data.color;
   const backgroundColor = theme.dark.palette.system[itemColor].main;
-  if (!item) return null;
 
   const coordinates: GeolocationCoordinates = {
     latitude: item.coordinate.latitude,
@@ -39,11 +39,15 @@ const ListItem = ({ index, style, data }: ListItemProps) => {
 
   const distanceInMiles = getDistanceInMiles(currentLocation, coordinates).toFixed(1);
 
-  const bind = useDrag(({ down, distance }) => {
-    if (!down && distance < DRAG_THRESHOLD) {
-      data.onClick(item);
-    }
-  });
+  const bind = useDrag(
+    ({ down, distance: [dx, dy] }) => {
+      const totalDistance = Math.hypot(dx, dy);
+      if (!down && totalDistance < DRAG_THRESHOLD) {
+        data.onClick(item);
+      }
+    },
+    { filterTaps: true }, // Optional: Ensure only taps are captured
+  );
 
   return (
     <StyledListItem style={style} {...bind()}>
@@ -52,7 +56,7 @@ const ListItem = ({ index, style, data }: ListItemProps) => {
       </Box>
       <Box>
         <Typography bold>{item.title}</Typography>
-        <Typography>{item.data.address.subLocality}</Typography>
+        <Typography>{item?.data?.address?.subLocality ?? ""}</Typography>
         <Typography>{`${distanceInMiles} miles`}</Typography>
       </Box>
     </StyledListItem>

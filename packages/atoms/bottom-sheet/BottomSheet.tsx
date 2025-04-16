@@ -1,6 +1,6 @@
 import { useRef, useEffect, memo } from "react";
 import { useSpring, config } from "@react-spring/web";
-import { useGesture } from "react-use-gesture";
+import { useGesture } from "@use-gesture/react";
 
 import { StyledSheet, StyledHandle } from "./styled";
 
@@ -19,10 +19,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onSnapPointChange,
   disableGesture,
 }) => {
-  const skipGestureRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const [{ y }, setY] = useSpring(() => ({
+  const [{ y }, api] = useSpring(() => ({
     y: 0,
     config: {
       ...config.default,
@@ -31,102 +30,95 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     },
   }));
 
-  const getClosestSnapPoint = (currentY: number) => {
+  const getClosestSnapPoint = (currentPercentage: number) => {
     return snapPoints.reduce((prev, curr) => {
-      return Math.abs(curr - currentY) < Math.abs(prev - currentY) ? curr : prev;
+      return Math.abs(curr - currentPercentage) < Math.abs(prev - currentPercentage) ? curr : prev;
     });
   };
 
   const bind = useGesture(
     {
-      onDrag: ({ event, movement: [, my], memo }) => {
+      onDrag: ({ event, movement: [, my], memo = y.get() }) => {
+        event.preventDefault();
         event.stopPropagation();
-        if (skipGestureRef.current || disableGesture) {
-          return;
-        }
-        const initialY = memo || y.get();
-        const limitY = (7 / 100) * ((sheetRef.current?.offsetHeight || 0) - 80);
-        if (initialY <= limitY && my < 0) {
-          return;
-        }
+        if (disableGesture) return;
 
-        setY({ y: initialY + my });
-        return initialY;
+        const sheetHeight = sheetRef.current ? sheetRef.current.getBoundingClientRect().height - 80 : 0;
+        const newY = Math.min(Math.max(0, memo + my), sheetHeight);
+        api.start({ y: newY });
+        return memo;
       },
-      onDragEnd: ({ event, velocity, movement: [, my] }) => {
+      onDragEnd: ({ event, velocity: [, vy], direction: [, yDir], movement: [, my] }) => {
+        event.preventDefault();
         event.stopPropagation();
-        if (skipGestureRef.current || disableGesture) {
-          return;
-        }
-        const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
+        if (disableGesture) return;
+
+        const sheetHeight = sheetRef.current ? sheetRef.current.getBoundingClientRect().height - 80 : 0;
         const currentY = y.get();
-        const currentPercentage = (currentY / sheetHeight) * 100;
+        const currentPercentage = sheetHeight ? (currentY / sheetHeight) * 100 : 0;
+        const isVelocityHigh = Math.abs(vy) > 0.5;
 
-        const targetPercentage = currentPercentage + (my / sheetHeight) * 100;
-        const direction = my > 0 ? 1 : -1;
-        const velocityThreshold = 0.1;
-        const isMomentum = Math.abs(velocity) > velocityThreshold;
+        console.log("--- onDragEnd ---");
+        console.log("currentY:", currentY);
+        console.log("currentPercentage:", currentPercentage);
+        console.log("vy:", vy);
+        console.log("yDir:", yDir);
+        console.log("isVelocityHigh:", isVelocityHigh);
 
-        const getNextSnapPoint = (snapPoints: number[], target: number, direction: number, isMomentum: boolean) => {
-          if (isMomentum) {
-            return direction > 0
-              ? snapPoints.find(sp => sp > target)
-              : snapPoints
-                  .slice()
-                  .reverse()
-                  .find(sp => sp < target);
-          } else {
-            return snapPoints.reduce((prev, curr) => {
-              return Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev;
-            });
+        let nextSnapPoint = getClosestSnapPoint(currentPercentage);
+        console.log("Closest snap point:", nextSnapPoint);
+
+        if (isVelocityHigh) {
+          const possibleSnapPoints =
+            yDir > 0
+              ? snapPoints.filter(sp => sp > currentPercentage)
+              : snapPoints.filter(sp => sp < currentPercentage);
+          if (possibleSnapPoints.length > 0) {
+            nextSnapPoint = yDir > 0 ? Math.min(...possibleSnapPoints) : Math.max(...possibleSnapPoints);
           }
-        };
+          console.log("Adjusted snap point based on velocity:", nextSnapPoint);
+        }
 
-        const nextSnapPoint =
-          getNextSnapPoint(snapPoints, targetPercentage, direction, isMomentum) ||
-          getClosestSnapPoint(targetPercentage);
-
-        setY({ y: (nextSnapPoint / 100) * sheetHeight });
-        // Reset the forceUpdate flag to avoid unwanted sheet movements.
+        console.log("Setting y to:", (nextSnapPoint / 100) * sheetHeight);
+        api.start({ y: (nextSnapPoint / 100) * sheetHeight });
         if (onSnapPointChange) {
           onSnapPointChange({ snapPoint: nextSnapPoint, forceUpdate: false });
         }
       },
     },
-    { drag: { useTouch: true } },
+    {
+      drag: {
+        from: () => [0, y.get()],
+        filterTaps: true,
+        pointer: { touch: true },
+      },
+      eventOptions: { passive: false },
+    },
   );
+
+  useEffect(() => {
+    const sheetHeight = sheetRef.current ? sheetRef.current.getBoundingClientRect().height - 80 : 0;
+    api.start({ y: (snapPoints[1] / 100) * sheetHeight });
+  }, [api, snapPoints]);
 
   useEffect(() => {
     if (!setSnapPoint.forceUpdate) {
       return;
     }
+    const sheetHeight = sheetRef.current ? sheetRef.current.getBoundingClientRect().height - 80 : 0;
+    api.start({ y: (setSnapPoint.snapPoint / 100) * sheetHeight });
 
-    skipGestureRef.current = true;
-    const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80;
-
-    setY({ y: (setSnapPoint.snapPoint / 100) * sheetHeight });
-
-    setTimeout(() => {
-      skipGestureRef.current = false;
-    }, 300);
-
-    // Reset the forceUpdate flag to avoid unwanted sheet movements.
     if (onSnapPointChange) {
       onSnapPointChange({ snapPoint: setSnapPoint.snapPoint, forceUpdate: false });
     }
-  }, [setSnapPoint]);
-
-  useEffect(() => {
-    const sheetHeight = (sheetRef.current?.offsetHeight || 0) - 80; // Subtract 80 if required
-    const initialY = (snapPoints[1] / 100) * sheetHeight; // Replace 0 with the desired snap point index
-    setY({ y: initialY });
-  }, [setY]);
+  }, [setSnapPoint, api, onSnapPointChange]);
 
   return (
     <StyledSheet
       ref={sheetRef}
       {...bind()}
       style={{
+        touchAction: "none",
         transform: y.to(value => `translate3d(0, ${value}px, 0)`),
       }}
     >
