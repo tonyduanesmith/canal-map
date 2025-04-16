@@ -6,6 +6,20 @@ import windingImage from "../icons/winding/winding.svg";
 import bridgeImageArray from "../icons/bridge";
 import { useIsMapkitLoaded } from "../../utils/helpers/hooks";
 import { Coordinate, dijkstra, findPlacesNearPath, getCoordinatesToOverlay } from "../../pages/main/utils";
+import Supercluster from "supercluster";
+
+// GPU acceleration hint for MapKit annotations
+const annotationGpuStyle = `
+  .mktk-map .mktk-annotation-layer .mktk-annotation,
+  .mktk-map .mktk-annotation-layer .mktk-annotation img {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+`;
+const styleEl = document.createElement("style");
+styleEl.textContent = annotationGpuStyle;
+document.head.appendChild(styleEl);
 
 type MapProps = {
   token: string;
@@ -33,82 +47,9 @@ const Map = ({
   const pathOverlayRef = useRef<mapkit.PolylineOverlay>();
   const mapRef = useRef<mapkit.Map>();
   const isLoaded = useIsMapkitLoaded({ token: import.meta.env.VITE_TOKEN });
-  const renderQueue = useRef<mapkit.ImageAnnotation[]>([]);
-  const isRendering = useRef(false);
-  const visibleAnnotations = useRef(new Set<mapkit.ImageAnnotation>());
 
-  const isAnnotationInView = (annotation: mapkit.ImageAnnotation, region: mapkit.CoordinateRegion) => {
-    const { latitude, longitude } = annotation.coordinate;
-    const north = region.center.latitude + region.span.latitudeDelta / 2;
-    const south = region.center.latitude - region.span.latitudeDelta / 2;
-    const east = region.center.longitude + region.span.longitudeDelta / 2;
-    const west = region.center.longitude - region.span.longitudeDelta / 2;
-
-    return latitude >= south && latitude <= north && longitude >= west && longitude <= east;
-  };
-
-  const throttle = <T extends any[]>(func: (...args: T) => void, delay: number) => {
-    let timeout: NodeJS.Timeout | null = null;
-    return function (...args: T) {
-      if (!timeout) {
-        timeout = setTimeout(() => {
-          func(...args);
-          timeout = null;
-        }, delay);
-      }
-    };
-  };
-
-  const renderAnnotations = () => {
-    if (isRendering.current) return;
-
-    isRendering.current = true;
-    requestAnimationFrame(() => {
-      const annotationsToRender = renderQueue.current.slice(0, 20); // Render 10 annotations at a time
-      renderQueue.current = renderQueue.current.slice(20);
-
-      annotationsToRender.forEach(annotation => {
-        if (!visibleAnnotations.current.has(annotation)) {
-          mapRef.current?.addAnnotation(annotation);
-          visibleAnnotations.current.add(annotation);
-        }
-      });
-
-      isRendering.current = false;
-
-      if (renderQueue.current.length > 0) {
-        renderAnnotations();
-      }
-    });
-  };
-
-  const handleZoomChange = throttle(() => {
-    const currentRegion = mapRef.current?.region;
-
-    if (currentRegion && currentRegion.span.latitudeDelta < 0.5) {
-      // Determine which annotations should be visible
-      const newVisibleAnnotations = annotations.filter(annotation => isAnnotationInView(annotation, currentRegion));
-
-      // Add new annotations that are now in view
-      const newAnnotations = newVisibleAnnotations.filter(annotation => !visibleAnnotations.current.has(annotation));
-      renderQueue.current.push(...newAnnotations);
-
-      // Remove annotations that are no longer in view
-      visibleAnnotations.current.forEach(annotation => {
-        if (!isAnnotationInView(annotation, currentRegion)) {
-          mapRef.current?.removeAnnotation(annotation);
-          visibleAnnotations.current.delete(annotation);
-        }
-      });
-
-      renderAnnotations();
-    } else {
-      visibleAnnotations.current.forEach(annotation => {
-        mapRef.current?.removeAnnotation(annotation);
-      });
-      visibleAnnotations.current.clear();
-    }
-  }, 100);
+  // Canvas clustering state
+  const clusterIndexRef = useRef<any>(null);
 
   useEffect(() => {
     if (isLoaded) {
@@ -127,58 +68,117 @@ const Map = ({
         }
 
         if (mapRef.current) {
-          mapRef.current.annotationForCluster = clusterAnnotation => {
-            if (clusterAnnotation.clusteringIdentifier === "lock") {
-              const angle = clusterAnnotation.memberAnnotations[0]?.data?.angle ?? 0;
-              return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
-                url: {
-                  1: lockClusterImageArray[angle],
-                },
-                size: {
-                  width: 20,
-                  height: 20,
-                },
-                anchorOffset: new DOMPoint(0, -10),
-                animates: false, // Disable animation for cluster annotations
-              });
-            }
-            if (clusterAnnotation.clusteringIdentifier === "winding") {
-              return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
-                url: {
-                  1: windingImage,
-                },
-                size: {
-                  width: 20,
-                  height: 20,
-                },
-                anchorOffset: new DOMPoint(0, -10),
-                animates: false, // Disable animation for cluster annotations
-              });
-            }
-            if (clusterAnnotation.clusteringIdentifier === "bridge") {
-              const angle = Math.ceil(clusterAnnotation.memberAnnotations[0]?.data?.angle ?? 0);
-              return new mapkit.ImageAnnotation(clusterAnnotation.coordinate, {
-                url: {
-                  1: bridgeImageArray[angle],
-                },
-                size: {
-                  width: 20,
-                  height: 20,
-                },
-                anchorOffset: new DOMPoint(0, -10),
-                animates: false, // Disable animation for cluster annotations
-              });
-            }
-          };
-
+          // Center map on initial region
           mapRef.current.region = currentRegion;
-          mapRef.current.showsUserLocation = showsUserLocation;
-          handleZoomChange(); // Initialize with the correct annotations in view
+
+          // Build Supercluster index (once)
+          if (!clusterIndexRef.current) {
+            clusterIndexRef.current = new Supercluster({
+              radius: 60,
+              maxZoom: 16,
+            }).load(
+              annotations.map(ann => ({
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: [ann.coordinate.longitude, ann.coordinate.latitude],
+                },
+                properties: { id: ann.data.id, annotation: ann, type: (ann as any).clusteringIdentifier },
+              })),
+            );
+          }
+
           mapRef.current.addOverlays(overlays);
 
-          mapRef.current.addEventListener("region-change-end", handleZoomChange);
-          // @ts-ignore
-          mapRef.current._allowWheelToZoom = true;
+          // Function to update clusters as annotations
+          const updateClusters = () => {
+            // disable built-in clustering for raw annotations
+            annotations.forEach(a => {
+              (a as any).clusteringIdentifier = null;
+            });
+
+            const region = mapRef.current!.region;
+            const width = mapRef.current!.element.clientWidth;
+            const zoom = Math.floor(Math.log2((width * 360) / (region.span.longitudeDelta * 256)));
+            const CLUSTER_ZOOM_THRESHOLD = 12;
+            console.log(zoom);
+            if (zoom > CLUSTER_ZOOM_THRESHOLD) {
+              // at high zoom, skip clustering—show raw annotations in view
+              const north = region.center.latitude + region.span.latitudeDelta / 2;
+              const south = region.center.latitude - region.span.latitudeDelta / 2;
+              const east = region.center.longitude + region.span.longitudeDelta / 2;
+              const west = region.center.longitude - region.span.longitudeDelta / 2;
+              const visible = annotations.filter(ann => {
+                const lat = ann.coordinate.latitude;
+                const lng = ann.coordinate.longitude;
+                return lat >= south && lat <= north && lng >= west && lng <= east;
+              });
+              mapRef.current!.removeAnnotations(mapRef.current!.annotations);
+              mapRef.current!.addAnnotations(visible);
+              return;
+            }
+
+            const bbox = [
+              region.center.longitude - region.span.longitudeDelta / 2,
+              region.center.latitude - region.span.latitudeDelta / 2,
+              region.center.longitude + region.span.longitudeDelta / 2,
+              region.center.latitude + region.span.latitudeDelta / 2,
+            ];
+            const raw = (clusterIndexRef.current as any).getClusters(bbox, zoom);
+            const anns = raw.map((c: any) => {
+              if (c.properties.cluster) {
+                // Determine cluster type and a representative angle
+                const leaves = (clusterIndexRef.current as any).getLeaves(c.properties.cluster_id, Infinity);
+                const first = leaves[0].properties as any;
+                const type = first.type;
+                const angle = first.annotation.data.angle ?? 0;
+
+                // Choose the correct icon for this cluster
+                let url: mapkit.ImageAnnotationConstructorOptions["url"];
+                if (type === "lock") {
+                  url = { 1: lockClusterImageArray[angle] };
+                } else if (type === "winding") {
+                  url = { 1: windingImage };
+                } else if (type === "bridge") {
+                  url = { 1: bridgeImageArray[angle] };
+                } else {
+                  url = { 1: lockClusterImageArray[0] };
+                }
+
+                return new mapkit.ImageAnnotation(
+                  new mapkit.Coordinate(c.geometry.coordinates[1], c.geometry.coordinates[0]),
+                  {
+                    animates: false,
+                    url,
+                    size: { width: 20, height: 20 },
+                    anchorOffset: new DOMPoint(0, -10),
+                    data: { count: c.properties.point_count },
+                  },
+                );
+              } else {
+                // individual point
+                return c.properties.annotation as mapkit.ImageAnnotation;
+              }
+            });
+            // batch update
+            mapRef.current!.removeAnnotations(mapRef.current!.annotations);
+            mapRef.current!.addAnnotations(anns);
+          };
+
+          mapRef.current.addEventListener("region-change-end", updateClusters);
+          // Use requestAnimationFrame for live cluster updates at 60fps
+          let scheduled = false;
+          (mapRef.current as any).addEventListener("region-change", () => {
+            if (scheduled) return;
+            scheduled = true;
+            requestAnimationFrame(() => {
+              updateClusters();
+              scheduled = false;
+            });
+          });
+
+          // Initial render
+          updateClusters();
         }
       };
 
